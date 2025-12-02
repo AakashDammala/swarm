@@ -102,5 +102,15 @@ plantuml UML/*.puml
 ```
 The generated PNG images will also be in the `UML/` directory.
 
+## Phase 1 document links
+
+[Sprint Planning & Review Notes](https://docs.google.com/document/d/1xyVzuPojLUU2ijKYIgwqooY2sP45Se7Qx6sxsTQxp9g)
+
+[Project Backlog](https://docs.google.com/spreadsheets/d/1apdEpKx5ClFwtKKBICFvqRLYgSiml8kgF4ZGtkOULHc)
+
+UML Diagrams: 'UML/initial/' folder
+
+Doxygen Documentation: 'src/docs/doxygen/html/index.html' file
+
 ## License
 MIT
