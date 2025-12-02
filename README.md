@@ -1,6 +1,6 @@
 # Swarm: Autonomous Hazardous Waste Foraging System
 
-![CICD Workflow status](https://github.com/AakashDammala/swarm/actions/workflows/run-unit-test-and-upload-codecov.yml/badge.svg) [![codecov](https://codecov.io/gh/AakashDammala/swarm/branch/main/graph/badge.svg)](https://codecov.io/gh/AakashDammala/swarm) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![CICD Workflow status](https://github.com/AakashDammala/swarm/actions/workflows/run-unit-test-and-upload-codecov.yml/badge.svg) [![codecov](https://codecov.io/gh/AakashDammala/swarm/branch/phase1/graph/badge.svg)](https://codecov.io/gh/AakashDammala/swarm) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Overview
 Project Swarm is a decentralized multi-robot system designed to autonomously forage for hazardous waste (simulated as neon green objects) in a disaster scenario. The system utilizes multiple e-puck robots in a Webots simulation, leveraging ROS 2 Humble for communication and control.

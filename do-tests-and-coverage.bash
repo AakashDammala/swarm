@@ -24,7 +24,17 @@ set -u                          # re-enable undefined variable check
 ##############################
 # 2. run all tests
 ##############################
+# Launch simulation in background for integration tests
+echo "Starting simulation..."
+ros2 launch swarm_view swarm_view.launch.py &
+SIM_PID=$!
+sleep 15 # Wait for Webots to initialize
+
 colcon test
+
+# Kill simulation
+echo "Stopping simulation..."
+kill $SIM_PID || true
 
 ##############################
 # 3. get return status
