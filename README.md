@@ -1,6 +1,6 @@
 # Swarm: Autonomous Hazardous Waste Foraging System
 
-![CICD Workflow status](https://github.com/AakashDammala/swarm/actions/workflows/run-unit-test-and-upload-codecov.yml/badge.svg) [![codecov](https://codecov.io/gh/AakashDammala/swarm/branch/main/graph/badge.svg)](https://codecov.io/gh/AakashDammala/swarm) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![CICD Workflow status](https://github.com/AakashDammala/swarm/actions/workflows/run-unit-test-and-upload-codecov.yml/badge.svg) [![codecov](https://codecov.io/gh/AakashDammala/swarm/branch/phase1/graph/badge.svg)](https://codecov.io/gh/AakashDammala/swarm) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Overview
 Project Swarm is a decentralized multi-robot system designed to autonomously forage for hazardous waste (simulated as neon green objects) in a disaster scenario. The system utilizes multiple e-puck robots in a Webots simulation, leveraging ROS 2 Humble for communication and control.
@@ -94,7 +94,23 @@ To generate UML diagrams using `clang-uml`:
 ```bash
 clang-uml
 ```
-The diagrams will be generated as `.puml` files in the root directory (e.g., `swarm_class_diagram.puml`). You can view them using a PlantUML viewer or convert them to images.
+The diagrams will be generated as `.puml` files in the `UML/` directory (e.g., `UML/swarm_class_diagram.puml`).
+
+To convert the `.puml` files to PNG images (requires `plantuml`):
+```bash
+plantuml UML/*.puml
+```
+The generated PNG images will also be in the `UML/` directory.
+
+## Phase 1 document links
+
+[Sprint Planning & Review Notes](https://docs.google.com/document/d/1xyVzuPojLUU2ijKYIgwqooY2sP45Se7Qx6sxsTQxp9g)
+
+[Project Backlog](https://docs.google.com/spreadsheets/d/1apdEpKx5ClFwtKKBICFvqRLYgSiml8kgF4ZGtkOULHc)
+
+UML Diagrams: 'UML/initial/' folder
+
+Doxygen Documentation: 'src/docs/doxygen/html/index.html' file
 
 ## License
 MIT

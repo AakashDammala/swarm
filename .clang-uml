@@ -1,0 +1,50 @@
+query_driver: /usr/bin/c++
+add_compile_flags:
+  - -std=c++17
+  - -include/home/aakash/swarm/UML/mock_logging.hpp
+output_directory: UML
+diagrams:
+  swarm_class_diagram:
+    type: class
+    glob:
+      - src/swarm_controller/**/*.cpp
+      - src/swarm_controller/**/*.hpp
+      - src/swarm_model/**/*.cpp
+      - src/swarm_model/**/*.hpp
+      - src/swarm_view/**/*.cpp
+      - src/swarm_view/**/*.hpp
+    using_namespace:
+      - swarm_model
+      - swarm_view
+      - swarm_controller
+    include:
+      namespaces:
+        - swarm_model
+        - swarm_view
+        - swarm_controller
+    exclude:
+      namespaces:
+        - std
+        - rclcpp
+
+  swarm_sequence_diagram:
+    type: sequence
+    glob:
+      - src/swarm_controller/**/*.cpp
+      - src/swarm_controller/**/*.hpp
+      - src/swarm_model/**/*.cpp
+      - src/swarm_model/**/*.hpp
+      - src/swarm_view/**/*.cpp
+      - src/swarm_view/**/*.hpp
+    combine_free_functions_into_file_participants: true
+    start_from:
+      - function: "swarm_controller::RobotController::control_loop()"
+    include:
+      namespaces:
+        - swarm_model
+        - swarm_view
+        - swarm_controller
+    exclude:
+      namespaces:
+        - std
+        - rclcpp
