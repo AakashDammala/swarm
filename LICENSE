@@ -1,6 +1,9 @@
 MIT License
 
-Copyright (c) 2024 Tommy Chang
+Copyright (c) 2024 Aakash Dammala
+
+This project is built on top of Tommy Chang's ENPM700-final-project-boilerplate
+https://github.com/TommyChangUMD/ENPM700-final-project-boilerplate
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,0 +1,54 @@
+@startuml
+enum "State" as C_0005350900337974002811
+enum C_0005350900337974002811 {
+IDLE
+SEARCHING
+COLLECTING
+DUMPING
+AVOIDING
+}
+class "RobotFSM" as C_0009163904200768550061
+class C_0009163904200768550061 {
++RobotFSM() : void
+..
+-avoid() : void
+-collect() : void
+-dump() : void
++get_state() const : State
+-search() : void
++set_object_detected(bool detected) : void
++set_obstacle_detected(bool detected) : void
++update() : void
+__
+-current_state_ : State
+-object_detected_ : bool
+-obstacle_detected_ : bool
+}
+class "::swarm_controller::RobotController" as C_0014652364979860884623
+class C_0014652364979860884623 {
++RobotController() : void
+..
+-control_loop() : void
+-detect_object() : void
+-move_robot(double linear_x, double angular_z) : void
+-scan_environment() : void
+__
+-cmd_vel_pub_ : rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr
+-fsm_ : RobotFSM
+-timer_ : rclcpp::TimerBase::SharedPtr
+}
+class "::swarm_view::RobotView" as C_0017533343851551892716
+class C_0017533343851551892716 {
++RobotView() : void
+..
++detect_object() : void
++move_robot() : void
++scan_environment() : void
+__
+}
+C_0009163904200768550061 o-- C_0005350900337974002811 : -current_state_
+C_0014652364979860884623 o-- C_0009163904200768550061 : -fsm_
+
+'Generated with clang-uml, version 0.6.2
+'LLVM version Ubuntu clang version 15.0.7
+@enduml

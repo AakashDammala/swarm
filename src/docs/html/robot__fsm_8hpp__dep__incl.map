@@ -1,0 +1,5 @@
+<map id="src/swarm_model/include/swarm_model/robot_fsm.hpp" name="src/swarm_model/include/swarm_model/robot_fsm.hpp">
+<area shape="rect" id="node1" title="Header file for the Robot Finite State Machine." alt="" coords="83,5,299,47"/>
+<area shape="rect" id="node2" href="$robot__controller_8cpp.html" title="Implementation of the Robot Controller Node." alt="" coords="5,95,184,136"/>
+<area shape="rect" id="node3" href="$robot__fsm_8cpp.html" title="Implementation of the Robot Finite State Machine." alt="" coords="208,95,368,136"/>
+</map>

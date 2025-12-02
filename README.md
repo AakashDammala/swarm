@@ -94,7 +94,13 @@ To generate UML diagrams using `clang-uml`:
 ```bash
 clang-uml
 ```
-The diagrams will be generated as `.puml` files in the root directory (e.g., `swarm_class_diagram.puml`). You can view them using a PlantUML viewer or convert them to images.
+The diagrams will be generated as `.puml` files in the `UML/` directory (e.g., `UML/swarm_class_diagram.puml`).
+
+To convert the `.puml` files to PNG images (requires `plantuml`):
+```bash
+plantuml UML/*.puml
+```
+The generated PNG images will also be in the `UML/` directory.
 
 ## License
 MIT
