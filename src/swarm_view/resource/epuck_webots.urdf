@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<robot name="EpuckWebots">
+    <webots>
+        <plugin type="epuck_driver.EpuckDriver" />
+
+        <device reference="Lidar">
+            <ros>
+                <topicName>/scan</topicName>
+                <enabled>true</enabled>
+                <updateRate>10</updateRate>
+            </ros>
+        </device>
+
+        <device reference="Camera">
+            <ros>
+                <topicName>/camera/image_raw</topicName>
+                <alwaysOn>true</alwaysOn>
+            </ros>
+        </device>
+    </webots>
+</robot>
