@@ -43,6 +43,7 @@ def generate_launch_description():
     world_config = config.get('world_setup', {})
     gen_config = config.get('generation_params', {})
     waste_config = config.get('waste_params', {})
+    robot_config = config.get('robot_params', {})
     
     arena_width = world_config.get('arena_width', 10)
     basic_time_step = world_config.get('basic_time_step', 16)
@@ -61,6 +62,10 @@ def generate_launch_description():
     num_waste = waste_config.get('num_waste_per_room', 5)
     waste_size = waste_config.get('waste_block_size', 0.1)
     seed = waste_config.get('random_seed', -1)
+    
+    # Robot Params
+    cam_w = robot_config.get('camera_width', 64)
+    cam_h = robot_config.get('camera_height', 64)
     
     if seed >= 0:
         random.seed(seed)
@@ -224,7 +229,9 @@ def generate_launch_description():
             f_out.write(f"E-puck {{\n")
             f_out.write(f"  translation {x_c} {y_c} 0\n")
             f_out.write(f"  name \"{robot_name}\"\n")
-            f_out.write(f"  controller \"<extern>\"\n") 
+            f_out.write(f"  controller \"<extern>\"\n")
+            f_out.write(f"  camera_width {cam_w}\n")
+            f_out.write(f"  camera_height {cam_h}\n") 
             f_out.write(f"  turretSlot [\n")
             f_out.write(f"    Lidar {{\n")
             f_out.write(f"      translation 0 0 0.05\n")

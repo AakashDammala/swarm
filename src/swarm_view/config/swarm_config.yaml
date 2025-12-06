@@ -21,3 +21,7 @@ waste_params:
   num_waste_per_room: 5
   waste_block_size: 0.03
   random_seed: 5 # < 0 for random, >= 0 for fixed seed
+
+robot_params:
+  camera_width: 128
+  camera_height: 128
