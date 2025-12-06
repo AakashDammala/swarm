@@ -1,6 +1,7 @@
 import os
 import yaml
 import math
+import random
 import launch
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -41,6 +42,7 @@ def generate_launch_description():
     # Read world configuration
     world_config = config.get('world_setup', {})
     gen_config = config.get('generation_params', {})
+    waste_config = config.get('waste_params', {})
     
     arena_width = world_config.get('arena_width', 10)
     basic_time_step = world_config.get('basic_time_step', 16)
@@ -54,6 +56,14 @@ def generate_launch_description():
     wall_height = gen_config.get('wall_height', 0.2)
     col_spacing = gen_config.get('col_spacing', 3.0)
     row_spacing = gen_config.get('row_spacing', 2.0)
+    
+    # Waste Params
+    num_waste = waste_config.get('num_waste_per_room', 5)
+    waste_size = waste_config.get('waste_block_size', 0.1)
+    seed = waste_config.get('random_seed', -1)
+    
+    if seed >= 0:
+        random.seed(seed)
     
     # 2. Generate World File with EXTERNPROTO headers
     print(f"Generating world file at: {generated_world} for {num_rooms} rooms")
@@ -75,8 +85,9 @@ def generate_launch_description():
         f_out.write(f"  basicTimeStep {basic_time_step}\n") 
         f_out.write("}\n")
         f_out.write("Viewpoint { orientation -0.5773 0.5773 0.5773 2.0944 position 0 0 10 }\n")
-        f_out.write("TexturedBackground {}\n")
-        f_out.write(f"TexturedBackgroundLight {{ castShadows {shadows_str} }}\n") 
+        f_out.write("TexturedBackground { texture \"factory\" }\n")
+        # f_out.write(f"TexturedBackgroundLight {{ castShadows {shadows_str} }}\n")
+        f_out.write(f"DirectionalLight {{ direction 0 0 -1 castShadows FALSE intensity 1.0 color 1 1 1 }}\n") 
         f_out.write(f"RectangleArena {{ floorSize {arena_width} {arena_height} floorAppearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }} }}\n\n")
         
         # --- GENERATION PARAMETERS ---
@@ -110,7 +121,7 @@ def generate_launch_description():
             f_out.write(f"  translation {x_c} {y_c + room_size/2 + wall_thick/2} {wall_height/2}\n")
             f_out.write(f"  children [\n")
             f_out.write(f"    Shape {{\n")
-            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} emissiveColor {floor_color_str}}} }}\n")
             f_out.write(f"      geometry Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
             f_out.write(f"    }}\n")
             f_out.write(f"  ]\n")
@@ -122,7 +133,7 @@ def generate_launch_description():
             f_out.write(f"  translation {x_c} {y_c - room_size/2 - wall_thick/2} {wall_height/2}\n")
             f_out.write(f"  children [\n")
             f_out.write(f"    Shape {{\n")
-            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} emissiveColor {floor_color_str}}} }}\n")
             f_out.write(f"      geometry Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
             f_out.write(f"      }}\n")
             f_out.write(f"  ]\n")
@@ -137,7 +148,7 @@ def generate_launch_description():
             f_out.write(f"  translation {x_c + inner_x_offset} {y_c} {wall_height/2}\n")
             f_out.write(f"  children [\n")
             f_out.write(f"    Shape {{\n")
-            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} emissiveColor {floor_color_str}}} }}\n")
             f_out.write(f"      geometry Box {{ size {wall_thick} {room_size} {wall_height} }}\n")
             f_out.write(f"    }}\n")
             f_out.write(f"  ]\n")
@@ -157,7 +168,7 @@ def generate_launch_description():
             f_out.write(f"  translation {x_c + outer_x_offset} {y_c + room_size/2 - segment_len/2} {wall_height/2}\n")
             f_out.write(f"  children [\n")
             f_out.write(f"    Shape {{\n")
-            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} emissiveColor {floor_color_str}}} }}\n")
             f_out.write(f"      geometry Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
             f_out.write(f"    }}\n")
             f_out.write(f"  ]\n")
@@ -169,12 +180,45 @@ def generate_launch_description():
             f_out.write(f"  translation {x_c + outer_x_offset} {y_c - room_size/2 + segment_len/2} {wall_height/2}\n")
             f_out.write(f"  children [\n")
             f_out.write(f"    Shape {{\n")
-            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} emissiveColor {floor_color_str}}} }}\n")
             f_out.write(f"      geometry Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
             f_out.write(f"    }}\n")
             f_out.write(f"  ]\n")
             f_out.write(f"  boundingObject Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
             f_out.write(f"}}\n")
+            
+            # --- RADIOACTIVE WASTE ---
+            for w in range(num_waste):
+                # Random position within room inner bounds
+                # Room x-range: [x_c - room_size/2 + wall_thick, x_c + room_size/2 - wall_thick]
+                # Room y-range: [y_c - room_size/2 + wall_thick, y_c + room_size/2 - wall_thick]
+                # Margin for waste size: waste_size/2 + safe margin
+                margin = wall_thick + waste_size/2 + 0.05
+                spawn_limit = room_size/2 - margin
+                
+                # Ensure we don't spawn on top of the robot (at center)
+                # Simple retry logic or keep-out zone
+                valid_pos = False
+                w_x, w_y = 0, 0
+                while not valid_pos:
+                    w_x = x_c + random.uniform(-spawn_limit, spawn_limit)
+                    w_y = y_c + random.uniform(-spawn_limit, spawn_limit)
+                    # Check distance to center (robot spawn is at x_c, y_c)
+                    dist = math.sqrt((w_x - x_c)**2 + (w_y - y_c)**2)
+                    if dist > 0.2: # Keep 20cm away from center
+                        valid_pos = True
+
+                f_out.write(f"Solid {{\n")
+                f_out.write(f"  translation {w_x} {w_y} {waste_size/2}\n")
+                f_out.write(f"  children [\n")
+                f_out.write(f"    Shape {{\n")
+                f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor 0 1 0 emissiveColor 0 1 0 }} }}\n")
+                f_out.write(f"      geometry Box {{ size {waste_size} {waste_size} {waste_size} }}\n")
+                f_out.write(f"    }}\n")
+                f_out.write(f"  ]\n")
+                f_out.write(f"  boundingObject Box {{ size {waste_size} {waste_size} {waste_size} }}\n")
+                f_out.write(f"  physics Physics {{ mass 0.1 }}\n")
+                f_out.write(f"}}\n")
             
             # --- ROBOT ---
             f_out.write(f"E-puck {{\n")

@@ -16,3 +16,8 @@ generation_params:
   wall_height: 0.2
   col_spacing: 3.0 # Distance between column centers (Left at -1.5, Right at 1.5)
   row_spacing: 2.0
+
+waste_params:
+  num_waste_per_room: 5
+  waste_block_size: 0.03
+  random_seed: 5 # < 0 for random, >= 0 for fixed seed
