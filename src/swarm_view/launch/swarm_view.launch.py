@@ -1,5 +1,6 @@
 import os
 import yaml
+import math
 import launch
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -34,9 +35,28 @@ def generate_launch_description():
     # 1. Read Config
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-
+    
+    num_rooms = config.get('num_rooms', 10)
+    
+    # Read world configuration
+    world_config = config.get('world_setup', {})
+    gen_config = config.get('generation_params', {})
+    
+    arena_width = world_config.get('arena_width', 10)
+    basic_time_step = world_config.get('basic_time_step', 16)
+    cast_shadows = world_config.get('cast_shadows', False)
+    floor_color = world_config.get('floor_color', [0.8, 0.6, 0.4])
+    floor_color_str = f"{floor_color[0]} {floor_color[1]} {floor_color[2]}"
+    shadows_str = "TRUE" if cast_shadows else "FALSE"
+    
+    room_size = gen_config.get('room_size', 1.0)
+    wall_thick = gen_config.get('wall_thick', 0.05)
+    wall_height = gen_config.get('wall_height', 0.2)
+    col_spacing = gen_config.get('col_spacing', 3.0)
+    row_spacing = gen_config.get('row_spacing', 2.0)
+    
     # 2. Generate World File with EXTERNPROTO headers
-    print(f"Generating world file at: {generated_world}")
+    print(f"Generating world file at: {generated_world} for {num_rooms} rooms")
     
     with open(generated_world, 'w') as f_out:
         # --- HEADER SECTION (Critical for Webots R2023b+) ---
@@ -47,19 +67,119 @@ def generate_launch_description():
         f_out.write("EXTERNPROTO \"https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto\"\n\n")
         
         # --- WORLD SETUP ---
+        rows = math.ceil(num_rooms / 2)
+        arena_height = max(10, rows * 2 + 2)
+        # arena_width is now from config
+        
         f_out.write("WorldInfo {\n")
-        f_out.write("  basicTimeStep 16\n") # 16ms step is standard for E-puck
+        f_out.write(f"  basicTimeStep {basic_time_step}\n") 
         f_out.write("}\n")
         f_out.write("Viewpoint { orientation -0.5773 0.5773 0.5773 2.0944 position 0 0 10 }\n")
         f_out.write("TexturedBackground {}\n")
-        f_out.write("TexturedBackgroundLight {}\n")
-        f_out.write("RectangleArena { floorSize 10 10 }\n\n")
+        f_out.write(f"TexturedBackgroundLight {{ castShadows {shadows_str} }}\n") 
+        f_out.write(f"RectangleArena {{ floorSize {arena_width} {arena_height} floorAppearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }} }}\n\n")
         
-        # --- ROBOTS ---
-        for robot in config['robots']:
+        # --- GENERATION PARAMETERS ---
+        # --- GENERATION PARAMETERS (now from config) ---
+        # room_size, wall_thick, wall_height, col_spacing, row_spacing defined above
+        
+        # --- WALL MATERIAL ---
+        # We will embed the appearance in each shape for simplicity, or could use DEF/USE
+        
+        for i in range(num_rooms):
+            col = i % 2 # 0: Left, 1: Right
+            row = i // 2
+            
+            # Room Center
+            # Left col: x = -1.5, Right col: x = 1.5
+            x_c = -1.5 if col == 0 else 1.5
+            y_c = row * row_spacing - (rows * row_spacing / 2) + (row_spacing / 2) # Center vertically around 0? Or start at 0?
+            # Let's start y at 0 and go up.
+            # Center vertically around 0
+            # Total height span is (rows-1) * row_spacing
+            y_offset = ((rows - 1) * row_spacing) / 2
+            y_c = (row * row_spacing) - y_offset
+            
+            robot_name = f"robot_{i+1}"
+            
+            f_out.write(f"# --- Room {i+1} ({'Left' if col==0 else 'Right'}) ---\n")
+            
+            # Identify Wall Positions relative to (x_c, y_c)
+            # Top Wall
+            f_out.write(f"Solid {{\n")
+            f_out.write(f"  translation {x_c} {y_c + room_size/2 + wall_thick/2} {wall_height/2}\n")
+            f_out.write(f"  children [\n")
+            f_out.write(f"    Shape {{\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      geometry Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
+            f_out.write(f"    }}\n")
+            f_out.write(f"  ]\n")
+            f_out.write(f"  boundingObject Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
+            f_out.write(f"}}\n")
+            
+            # Bottom Wall
+            f_out.write(f"Solid {{\n")
+            f_out.write(f"  translation {x_c} {y_c - room_size/2 - wall_thick/2} {wall_height/2}\n")
+            f_out.write(f"  children [\n")
+            f_out.write(f"    Shape {{\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      geometry Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
+            f_out.write(f"      }}\n")
+            f_out.write(f"  ]\n")
+            f_out.write(f"  boundingObject Box {{ size {room_size + 2*wall_thick} {wall_thick} {wall_height} }}\n")
+            f_out.write(f"}}\n")
+            
+            # Inner Wall (Solid, no door)
+            # If col 0 (Left), Inner is Right Wall (+x relative to center)
+            # If col 1 (Right), Inner is Left Wall (-x relative to center)
+            inner_x_offset = (room_size/2 + wall_thick/2) if col == 0 else -(room_size/2 + wall_thick/2)
+            f_out.write(f"Solid {{\n")
+            f_out.write(f"  translation {x_c + inner_x_offset} {y_c} {wall_height/2}\n")
+            f_out.write(f"  children [\n")
+            f_out.write(f"    Shape {{\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      geometry Box {{ size {wall_thick} {room_size} {wall_height} }}\n")
+            f_out.write(f"    }}\n")
+            f_out.write(f"  ]\n")
+            f_out.write(f"  boundingObject Box {{ size {wall_thick} {room_size} {wall_height} }}\n")
+            f_out.write(f"}}\n")
+            
+            # Outer Wall (With Door)
+            # If col 0 (Left), Outer is Left Wall (-x relative to center)
+            # If col 1 (Right), Outer is Right Wall (+x relative to center)
+            outer_x_offset = -(room_size/2 + wall_thick/2) if col == 0 else (room_size/2 + wall_thick/2)
+            
+            # Door Geometry: 2 segments with a gap in the middle
+            door_gap = 0.4
+            segment_len = (room_size - door_gap) / 2
+            # Upper Segment
+            f_out.write(f"Solid {{\n")
+            f_out.write(f"  translation {x_c + outer_x_offset} {y_c + room_size/2 - segment_len/2} {wall_height/2}\n")
+            f_out.write(f"  children [\n")
+            f_out.write(f"    Shape {{\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      geometry Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
+            f_out.write(f"    }}\n")
+            f_out.write(f"  ]\n")
+            f_out.write(f"  boundingObject Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
+            f_out.write(f"}}\n")
+            
+            # Lower Segment
+            f_out.write(f"Solid {{\n")
+            f_out.write(f"  translation {x_c + outer_x_offset} {y_c - room_size/2 + segment_len/2} {wall_height/2}\n")
+            f_out.write(f"  children [\n")
+            f_out.write(f"    Shape {{\n")
+            f_out.write(f"      appearance Appearance {{ material Material {{ diffuseColor {floor_color_str} }} }}\n")
+            f_out.write(f"      geometry Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
+            f_out.write(f"    }}\n")
+            f_out.write(f"  ]\n")
+            f_out.write(f"  boundingObject Box {{ size {wall_thick} {segment_len} {wall_height} }}\n")
+            f_out.write(f"}}\n")
+            
+            # --- ROBOT ---
             f_out.write(f"E-puck {{\n")
-            f_out.write(f"  translation {robot['x']} {robot['y']} 0\n")
-            f_out.write(f"  name \"{robot['name']}\"\n")
+            f_out.write(f"  translation {x_c} {y_c} 0\n")
+            f_out.write(f"  name \"{robot_name}\"\n")
             f_out.write(f"  controller \"<extern>\"\n") 
             f_out.write(f"  turretSlot [\n")
             f_out.write(f"    Lidar {{\n")
@@ -85,8 +205,9 @@ def generate_launch_description():
     launch_nodes.append(webots)
     launch_nodes.append(webots._supervisor)
 
-    for robot in config['robots']:
-        name = robot['name']
+    # Generate drivers for each robot based on num_rooms
+    for i in range(num_rooms):
+        name = f"robot_{i+1}"
         driver = WebotsController(
             robot_name=name,
             parameters=[{'robot_description': urdf_path}],

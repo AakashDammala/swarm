@@ -1,39 +1,18 @@
 # Store the spawn position for all the robots
 
-robots:
-  - name: robot_1
-    x: 0.0
-    y: 0.0
-  - name: robot_2
-    x: 0.0
-    y: 0.5
-  - name: robot_3
-    x: 0.0
-    y: 1.0
-  - name: robot_4
-    x: 0.0
-    y: 1.5
-  - name: robot_5
-    x: 0.0
-    y: 2.0
-  - name: robot_6
-    x: 0.0
-    y: 2.5
-  - name: robot_7
-    x: 0.0
-    y: 3.0
-  - name: robot_8
-    x: 0.0
-    y: 3.5
-  - name: robot_9
-    x: 0.0
-    y: 4.0
-  - name: robot_10
-    x: 0.0
-    y: 4.5
-  - name: robot_11
-    x: 0.0
-    y: 5.0
-  - name: robot_12
-    x: 0.0
-    y: 5.5
+
+# Number of rooms to generate (and robots to spawn)
+num_rooms: 10
+
+world_setup:
+  arena_width: 10
+  basic_time_step: 16
+  cast_shadows: false
+  floor_color: [0.8, 0.6, 0.4]
+
+generation_params:
+  room_size: 1.0
+  wall_thick: 0.05
+  wall_height: 0.2
+  col_spacing: 3.0 # Distance between column centers (Left at -1.5, Right at 1.5)
+  row_spacing: 2.0
