@@ -305,5 +305,14 @@ def generate_launch_description():
             name=f'static_tf_{name}_home'
         )
         launch_nodes.append(robot_home_tf)
+    
+    # 5. Controller Manager (Single Executable)
+    swarm_controller = Node(
+        package='swarm_controller',
+        executable='robot_controller',
+        output='screen',
+        parameters=[{'num_robots': num_rooms}]
+    )
+    launch_nodes.append(swarm_controller)
 
     return LaunchDescription(launch_nodes)
