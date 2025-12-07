@@ -71,6 +71,7 @@ def generate_launch_description():
         random.seed(seed)
     
     # 2. Generate World File with EXTERNPROTO headers
+    rows = math.ceil(num_rooms / 2)
     print(f"Generating world file at: {generated_world} for {num_rooms} rooms")
     
     with open(generated_world, 'w') as f_out:
@@ -82,7 +83,6 @@ def generate_launch_description():
         f_out.write("EXTERNPROTO \"https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto\"\n\n")
         
         # --- WORLD SETUP ---
-        rows = math.ceil(num_rooms / 2)
         arena_height = max(10, rows * 2 + 2)
         # arena_width is now from config
         
@@ -228,6 +228,13 @@ def generate_launch_description():
             # --- ROBOT ---
             f_out.write(f"E-puck {{\n")
             f_out.write(f"  translation {x_c} {y_c} 0\n")
+            
+            # Rotation to face the door (Outer Wall)
+            # Col 0 (Left Room): Door is at -X. Robot defaults to +X. Rotate pi.
+            # Col 1 (Right Room): Door is at +X. Robot defaults to +X. Rotate 0.
+            rot_angle = math.pi if col == 0 else 0
+            f_out.write(f"  rotation 0 0 1 {rot_angle}\n")
+
             f_out.write(f"  name \"{robot_name}\"\n")
             f_out.write(f"  controller \"<extern>\"\n")
             f_out.write(f"  camera_width {cam_w}\n")
@@ -265,5 +272,38 @@ def generate_launch_description():
             namespace=name
         )
         launch_nodes.append(driver)
+
+        # Calculate robot home position for static TF
+        col = i % 2 # 0: Left, 1: Right
+        row = i // 2
+        
+        # Calculate x_c (Center X)
+        x_c = -1.5 if col == 0 else 1.5
+        
+        # Calculate y_c (Center Y)
+        y_offset = ((rows - 1) * row_spacing) / 2
+        y_c = (row * row_spacing) - y_offset
+
+        # Calculate rotation (Yaw)
+        rot_angle = math.pi if col == 0 else 0
+
+        # Create Static Transform Publisher
+        # Args: x y z yaw pitch roll parent_frame child_frame
+        # robot_home_tf = Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     arguments=[str(x_c), str(y_c), '0', str(rot_angle), '0', '0', 'world', f'{name}_home'],
+        #     output='screen'
+        # )
+        
+        # ROS 2 static_transform_publisher arguments: --x --y --z --yaw --pitch --roll --frame-id --child-frame-id
+        # OR positional: x y z yaw pitch roll parent child
+        robot_home_tf = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            arguments=[str(x_c), str(y_c), '0', str(rot_angle), '0', '0', 'world', f'{name}_home'],
+            name=f'static_tf_{name}_home'
+        )
+        launch_nodes.append(robot_home_tf)
 
     return LaunchDescription(launch_nodes)
