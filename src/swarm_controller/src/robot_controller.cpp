@@ -8,10 +8,14 @@ namespace swarm_controller
 {
 
 RobotController::RobotController(const RobotParams& params)
-    : Node("robot_controller",
-           params.robot_name)  // Node name="robot_controller", Namespace=params.robot_name
+    : Node("robot_controller", params.robot_name),
+      rotation_speed_(params.rotation_speed),
+      distance_to_grasp_object_(params.distance_to_grasp_object)
 {
   RCLCPP_INFO(this->get_logger(), "RobotController Initialized for %s", params.robot_name.c_str());
+
+  // Set the FSM parameter
+  fsm_.set_min_distance_to_grasp(distance_to_grasp_object_);
 
   last_image_time_ = this->now();
 
@@ -27,23 +31,153 @@ RobotController::RobotController(const RobotParams& params)
   camera_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
       camera_topic, 8, std::bind(&RobotController::image_callback, this, std::placeholders::_1));
 
-  // Timer to update FSM
-  timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
+  // Subscribe to Lidar
+  std::string scan_topic = params.robot_name + "/scan";
+  scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+      scan_topic, 10, std::bind(&RobotController::lidar_callback, this, std::placeholders::_1));
+
+  // run the timer callback at 20 Hz
+  timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
                                    std::bind(&RobotController::control_loop, this));
 }
 
 void RobotController::scan_environment()
 {
   RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Scanning environment...");
-  // Rotate to scan
   move_robot(0.0, 0.5);
 }
 
-void RobotController::detect_object()
+void RobotController::lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
-  // Stub: In real implementation, check sensor data
-  // For now, we just simulate detection randomly or via logic
-  // fsm_.set_object_detected(true/false);
+  // Find minimum distance in the front sector
+  // Webots scan usually -PI to PI or similar. Front is usually index 0 or center of array depending
+  // on min/max angle. Let's assume standard behavior: min_range in front.
+
+  float min_dist = msg->range_max;
+
+  // Simple check: look at all ranges for now since object is small?
+  // Or better, just center sector.
+
+  for (float r : msg->ranges)
+  {
+    if (r < min_dist && r > msg->range_min)
+    {
+      min_dist = r;
+    }
+  }
+
+  current_distance_ = min_dist;
+  fsm_.set_distance_to_object(current_distance_);
+}
+
+void RobotController::rotate_search_object()
+{
+  // "send -0.05 omega cmd_vel"
+
+  bool found_green = false;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!center_pixels_.empty())
+    {
+      for (size_t i = 0; i < center_pixels_.size(); i += 3)
+      {
+        if (i + 2 < center_pixels_.size())
+        {
+          uint8_t r = center_pixels_[i];
+          uint8_t g = center_pixels_[i + 1];
+          uint8_t b = center_pixels_[i + 2];
+
+          if (g > 200 && r < 50 && b < 50)
+          {
+            found_green = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  fsm_.set_object_detected(found_green);
+
+  // If found, FSM will switch state next loop.
+  // Diagram says "not found -> rotate".
+  if (!found_green)
+  {
+    move_robot(0.0, -0.05);  // -0.05 omega
+  }
+  else
+  {
+    move_robot(0.0, 0.0);  // Stop momentarily? Or just let next state handle it.
+  }
+}
+
+void RobotController::approach_object()
+{
+  // "send 0.05 lin_vel till lidar distance < 0.05 m"
+  move_robot(0.05, 0.0);
+}
+
+void RobotController::grasp_object()
+{
+  RCLCPP_INFO(this->get_logger(), "Grasping object...");
+  move_robot(0.0, 0.0);  // Stop
+  // Simulate grasp time
+  // In real robot, trigger gripper.
+  // For now, infinite speed grasp:
+  fsm_.set_action_complete(true);
+}
+
+void RobotController::move_to_home()
+{
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Home...");
+  // Simplified: Rotate 180 (or blind turn) and move?
+  // Or just move backwards?
+  // Let's assume "Home" is just a state we reach after some time for this simulation
+  // since we lack localization.
+
+  // Hack: Just set at_home to true immediately for testing logic flow?
+  // Or better: Move for 2 seconds then set flag.
+
+  static int home_ticks = 0;
+  move_robot(-0.05, 0.0);  // Move back
+  home_ticks++;
+
+  if (home_ticks > 50)
+  {  // 5 seconds
+    fsm_.set_at_home(true);
+    home_ticks = 0;
+  }
+  else
+  {
+    fsm_.set_at_home(false);
+  }
+}
+
+void RobotController::move_to_out()
+{
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Out...");
+
+  // Move forward somewhere else
+  static int out_ticks = 0;
+  move_robot(0.05, 0.1);  // Curve out
+  out_ticks++;
+
+  if (out_ticks > 50)
+  {
+    fsm_.set_at_drop(true);
+    out_ticks = 0;
+  }
+  else
+  {
+    fsm_.set_at_drop(false);
+  }
+}
+
+void RobotController::release_object()
+{
+  RCLCPP_INFO(this->get_logger(), "Releasing object...");
+  move_robot(0.0, 0.0);
+  fsm_.set_action_complete(true);
 }
 
 void RobotController::move_robot(double linear_x, double angular_z)
@@ -79,7 +213,7 @@ void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr ms
   std::vector<uint8_t> new_center_pixels;
   // Step size is usually width * bytes_per_pixel. msg->step is bytes per row.
   int step = msg->step;
-  // User specified to assume bgra8 format
+  // Assume bgra8 format
   int bytes_per_pixel = 4;
 
   // Store the center 3 pixels for further processing
@@ -111,37 +245,39 @@ void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr ms
     center_pixels_ = new_center_pixels;
   }
 
-  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                       "Saved center pixels of size %lu", center_pixels_.size());
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+  //                      "Saved center pixels of size %lu", center_pixels_.size());
 }
 
 void RobotController::control_loop()
 {
-  // 1. Get inputs (Detect objects)
-  detect_object();
-
-  // 2. Update Model
   fsm_.update();
 
-  // 3. Act based on State
   swarm_model::State current_state = fsm_.get_state();
+
+  // Debug state
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000, "State: %d",
+  // (int)current_state);
+
   switch (current_state)
   {
-    case swarm_model::State::SEARCHING:
-      scan_environment();
+    case swarm_model::State::FIND_OBJECT:
+      rotate_search_object();
       break;
-    case swarm_model::State::COLLECTING:
-      RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
-                           "Controller: Collecting...");
-      move_robot(0.2, 0.0);  // Move forward to collect
+    case swarm_model::State::APPROACH_OBJECT:
+      approach_object();
       break;
-    case swarm_model::State::DUMPING:
-      RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Controller: Dumping...");
-      move_robot(0.0, 0.0);  // Stop to dump
+    case swarm_model::State::GRASP_OBJECT:
+      grasp_object();
       break;
-    case swarm_model::State::AVOIDING:
-      RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Controller: Avoiding...");
-      move_robot(-0.1, 0.5);  // Back up and turn
+    case swarm_model::State::MOVE_HOME:
+      move_to_home();
+      break;
+    case swarm_model::State::MOVE_OUT:
+      move_to_out();
+      break;
+    case swarm_model::State::RELEASE_OBJECT:
+      release_object();
       break;
     default:
       move_robot(0.0, 0.0);
@@ -168,8 +304,11 @@ int main(int argc, char** argv)
   for (int i = 0; i < num_robots; ++i)
   {
     swarm_controller::RobotParams params;
-    // Robot names are usually 1-indexed in this project based on launch file
+
+    // Robot names are 1-indexed in this project
     params.robot_name = "robot_" + std::to_string(i + 1);
+    params.rotation_speed = 0.05;
+    params.distance_to_grasp_object = 0.05;
 
     auto node = std::make_shared<swarm_controller::RobotController>(params);
     nodes.push_back(node);
