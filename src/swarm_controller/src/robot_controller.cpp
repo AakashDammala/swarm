@@ -13,10 +13,19 @@ RobotController::RobotController(const RobotParams& params)
 {
   RCLCPP_INFO(this->get_logger(), "RobotController Initialized for %s", params.robot_name.c_str());
 
+  last_image_time_ = this->now();
+
   // Publisher for velocity commands
   // Since we are in the namespace of the robot (e.g., /robot_1), publishing to "cmd_vel" ends up as
   // "/robot_1/cmd_vel"
   cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
+
+  // Subscribe to camera image
+  // Topic: /robot_X/robot_X/camera/image_color (based on user request)
+  // Since we are in /robot_X namespace, we subscribe to "robot_X/camera/image_color"
+  std::string camera_topic = params.robot_name + "/camera/image_color";
+  camera_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
+      camera_topic, 8, std::bind(&RobotController::image_callback, this, std::placeholders::_1));
 
   // Timer to update FSM
   timer_ = this->create_wall_timer(std::chrono::milliseconds(100),
@@ -43,6 +52,67 @@ void RobotController::move_robot(double linear_x, double angular_z)
   msg.linear.x = linear_x;
   msg.angular.z = angular_z;
   cmd_vel_pub_->publish(msg);
+}
+
+void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+{
+  rclcpp::Time current_time = this->now();
+  double dt = (current_time - last_image_time_).seconds();
+  if (dt > 0.0)
+  {
+    double freq = 1.0 / dt;
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
+                         "Receiving images at %.2f Hz", freq);
+  }
+  last_image_time_ = current_time;
+
+  // Log image size
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000, "Received image of size %dx%d",
+                       msg->width, msg->height);
+
+  // Extract center 3x3 pixels
+  // Center is at (width/2, height/2)
+  // We want to extract pixels from [cy-1, cx-1] to [cy+1, cx+1]
+  int cx = msg->width / 2;
+  int cy = msg->height / 2;
+
+  std::vector<uint8_t> new_center_pixels;
+  // Step size is usually width * bytes_per_pixel. msg->step is bytes per row.
+  int step = msg->step;
+  // User specified to assume bgra8 format
+  int bytes_per_pixel = 4;
+
+  // Store the center 3 pixels for further processing
+  for (int y = cy - 1; y <= cy + 1; ++y)
+  {
+    for (int x = cx - 1; x <= cx + 1; ++x)
+    {
+      int pixel_idx = y * step + x * bytes_per_pixel;
+
+      // Safety check
+      if (pixel_idx + 3 < (int)msg->data.size())
+      {
+        // bgra8 encoding: Blue, Green, Red, Alpha
+        uint8_t blue = msg->data[pixel_idx];
+        uint8_t green = msg->data[pixel_idx + 1];
+        uint8_t red = msg->data[pixel_idx + 2];
+        // uint8_t alpha = msg->data[pixel_idx + 3]; // Skip alpha
+
+        // Store as RGB
+        new_center_pixels.push_back(red);
+        new_center_pixels.push_back(green);
+        new_center_pixels.push_back(blue);
+      }
+    }
+  }
+
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    center_pixels_ = new_center_pixels;
+  }
+
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                       "Saved center pixels of size %lu", center_pixels_.size());
 }
 
 void RobotController::control_loop()

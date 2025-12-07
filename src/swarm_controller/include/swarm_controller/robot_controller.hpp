@@ -2,9 +2,12 @@
 #define SWARM_CONTROLLER_ROBOT_CONTROLLER_HPP_
 
 #include <geometry_msgs/msg/twist.hpp>
+#include <mutex>
 #include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <string>
 #include <swarm_model/robot_fsm.hpp>
+#include <vector>
 
 namespace swarm_controller
 {
@@ -36,10 +39,15 @@ class RobotController : public rclcpp::Node
   swarm_model::RobotFSM fsm_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_sub_;
+  rclcpp::Time last_image_time_;
+  std::vector<uint8_t> center_pixels_;
+  std::mutex mutex_;
 
   void scan_environment();
   void detect_object();
   void move_robot(double linear_x, double angular_z);
+  void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
   void control_loop();
 };
 

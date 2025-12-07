@@ -12,11 +12,12 @@ find_package(swarm_model REQUIRED)
 find_package(swarm_view REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
 
 add_executable(robot_controller src/robot_controller.cpp)
-ament_target_dependencies(robot_controller rclcpp swarm_model swarm_view std_msgs geometry_msgs)
+ament_target_dependencies(robot_controller rclcpp swarm_model swarm_view std_msgs geometry_msgs sensor_msgs)
 
 install(TARGETS
   robot_controller
