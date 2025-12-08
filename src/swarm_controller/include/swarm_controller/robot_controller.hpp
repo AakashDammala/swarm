@@ -11,14 +11,19 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <swarm_model/robot_fsm.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <string>
+#include <swarm_model/robot_fsm.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <vector>
 
 namespace swarm_controller
 {
+
+/**
+ * @brief Convert State enum to string
+ */
+std::string state_to_string(swarm_model::State state);
 
 /**
  * @brief Parameters for initializing a Robot Controller
@@ -37,15 +42,19 @@ struct RobotParams
  */
 class RobotController : public rclcpp::Node
 {
- public:
+public:
   /**
    * @brief Construct a new Robot Controller object
    *
    * @param params Configuration parameters for the robot
    */
-  explicit RobotController(const RobotParams& params);
+  explicit RobotController(const RobotParams & params);
 
- private:
+  static geometry_msgs::msg::Twist move_to_location(
+    const geometry_msgs::msg::Pose & current_pose,
+    const geometry_msgs::msg::Pose & goal_pose);
+
+private:
   swarm_model::RobotFSM fsm_;
   std::string robot_name_;
   rclcpp::TimerBase::SharedPtr timer_;
@@ -69,9 +78,6 @@ class RobotController : public rclcpp::Node
   void move_to_out();
   void grasp_object();
   void release_object();
-
-  geometry_msgs::msg::Twist move_to_location(const geometry_msgs::msg::Pose& current_pose,
-                                             const geometry_msgs::msg::Pose& goal_pose);
 
   void move_robot(double linear_x, double angular_z);
   void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);

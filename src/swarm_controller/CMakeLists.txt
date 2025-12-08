@@ -20,8 +20,38 @@ find_package(tf2_geometry_msgs REQUIRED)
 
 include_directories(include)
 
-add_executable(robot_controller src/robot_controller.cpp)
-ament_target_dependencies(robot_controller rclcpp swarm_model swarm_view std_msgs geometry_msgs sensor_msgs std_srvs tf2 tf2_ros tf2_geometry_msgs)
+add_library(swarm_controller_lib SHARED src/robot_controller.cpp)
+ament_target_dependencies(swarm_controller_lib
+  rclcpp
+  swarm_model
+  swarm_view
+  std_msgs
+  geometry_msgs
+  sensor_msgs
+  std_srvs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs)
+
+add_executable(robot_controller src/robot_controller_node.cpp)
+target_link_libraries(robot_controller swarm_controller_lib)
+ament_target_dependencies(robot_controller
+  rclcpp
+  swarm_model
+  swarm_view
+  std_msgs
+  geometry_msgs
+  sensor_msgs
+  std_srvs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_robot_controller test/test_robot_controller.cpp)
+  target_link_libraries(test_robot_controller swarm_controller_lib)
+endif()
 
 install(TARGETS
   robot_controller

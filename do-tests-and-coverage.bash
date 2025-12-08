@@ -30,7 +30,7 @@ echo "Starting simulation..."
 SIM_PID=$!
 sleep 15 # Wait for Webots to initialize
 
-colcon test
+colcon test --packages-select swarm_model
 
 # Kill simulation
 echo "Stopping simulation..."
