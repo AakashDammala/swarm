@@ -4,11 +4,35 @@
  */
 #include "swarm_controller/robot_controller.hpp"
 
+#include <cmath>
+
 namespace swarm_controller
 {
 
+std::string state_to_string(swarm_model::State state)
+{
+  switch (state)
+  {
+    case swarm_model::State::FIND_OBJECT:
+      return "find_object";
+    case swarm_model::State::APPROACH_OBJECT:
+      return "approach_object";
+    case swarm_model::State::GRASP_OBJECT:
+      return "grasp_object";
+    case swarm_model::State::MOVE_HOME:
+      return "move_home";
+    case swarm_model::State::MOVE_OUT:
+      return "move_out";
+    case swarm_model::State::RELEASE_OBJECT:
+      return "release_object";
+    default:
+      return "unknown";
+  }
+}
+
 RobotController::RobotController(const RobotParams& params)
-    : Node("robot_controller", params.robot_name),
+    : rclcpp::Node("robot_controller", params.robot_name),
+      robot_name_(params.robot_name),
       rotation_speed_(params.rotation_speed),
       distance_to_grasp_object_(params.distance_to_grasp_object)
 {
@@ -17,7 +41,7 @@ RobotController::RobotController(const RobotParams& params)
   // Set the FSM parameter
   fsm_.set_min_distance_to_grasp(distance_to_grasp_object_);
 
-  last_image_time_ = this->now();
+  // last_image_time_ = this->now();
 
   // Publisher for velocity commands
   // Since we are in the namespace of the robot (e.g., /robot_1), publishing to "cmd_vel" ends up as
@@ -32,9 +56,13 @@ RobotController::RobotController(const RobotParams& params)
       camera_topic, 8, std::bind(&RobotController::image_callback, this, std::placeholders::_1));
 
   // Subscribe to Lidar
-  std::string scan_topic = params.robot_name + "/scan";
+  std::string scan_topic = params.robot_name + "/lidar";
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
       scan_topic, 10, std::bind(&RobotController::lidar_callback, this, std::placeholders::_1));
+
+  // Initialize TF Listener
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   // run the timer callback at 20 Hz
   timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
@@ -49,22 +77,16 @@ void RobotController::scan_environment()
 
 void RobotController::lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
-  // Find minimum distance in the front sector
-  // Webots scan usually -PI to PI or similar. Front is usually index 0 or center of array depending
-  // on min/max angle. Let's assume standard behavior: min_range in front.
-
-  float min_dist = msg->range_max;
-
-  // Simple check: look at all ranges for now since object is small?
-  // Or better, just center sector.
-
-  for (float r : msg->ranges)
+  float min_dist = 100.0;
+  for (size_t i = 0; i < msg->ranges.size(); ++i)
   {
-    if (r < min_dist && r > msg->range_min)
+    if (min_dist > msg->ranges[i])
     {
-      min_dist = r;
+      min_dist = msg->ranges[i];
     }
   }
+
+  RCLCPP_INFO(this->get_logger(), "Minimum distance: %.2f", min_dist);
 
   current_distance_ = min_dist;
   fsm_.set_distance_to_object(current_distance_);
@@ -190,19 +212,20 @@ void RobotController::move_robot(double linear_x, double angular_z)
 
 void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-  rclcpp::Time current_time = this->now();
-  double dt = (current_time - last_image_time_).seconds();
-  if (dt > 0.0)
-  {
-    double freq = 1.0 / dt;
-    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
-                         "Receiving images at %.2f Hz", freq);
-  }
-  last_image_time_ = current_time;
+  // rclcpp::Time current_time = this->now();
+  // double dt = (current_time - last_image_time_).seconds();
+  // if (dt > 0.0)
+  // {
+  //   double freq = 1.0 / dt;
+  //   RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000,
+  //                        "Receiving images at %.2f Hz", freq);
+  // }
+  // last_image_time_ = current_time;
 
   // Log image size
-  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000, "Received image of size %dx%d",
-                       msg->width, msg->height);
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000, "Received image of size
+  // %dx%d",
+  //                      msg->width, msg->height);
 
   // Extract center 3x3 pixels
   // Center is at (width/2, height/2)
@@ -251,13 +274,50 @@ void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr ms
 
 void RobotController::control_loop()
 {
+  // Get the robot's pose, from it's home frame to base_link frame
+  try
+  {
+    geometry_msgs::msg::TransformStamped t;
+    t = tf_buffer_->lookupTransform(robot_name_ + "/home", robot_name_ + "/base_link",
+                                    tf2::TimePointZero);
+
+    std::lock_guard<std::mutex> lock(pose_mutex_);
+    robot_pose_.position.x = t.transform.translation.x;
+    robot_pose_.position.y = t.transform.translation.y;
+    robot_pose_.position.z = t.transform.translation.z;
+    robot_pose_.orientation = t.transform.rotation;
+
+    // RCLCPP_INFO(this->get_logger(), "Robot pose: x=%.2f, y=%.2f", t.transform.translation.x,
+    //             t.transform.translation.y);
+  }
+  catch (const tf2::TransformException& ex)
+  {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "Could not transform %s/base_link to %s/home: %s", robot_name_.c_str(),
+                         robot_name_.c_str(), ex.what());
+  }
+
   fsm_.update();
 
   swarm_model::State current_state = fsm_.get_state();
 
-  // Debug state
-  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000, "State: %d",
-  // (int)current_state);
+  double yaw = 0.0;
+  double x = 0.0;
+  double y = 0.0;
+
+  {
+    std::lock_guard<std::mutex> lock(pose_mutex_);
+    x = robot_pose_.position.x;
+    y = robot_pose_.position.y;
+    tf2::Quaternion q;
+    tf2::fromMsg(robot_pose_.orientation, q);
+    yaw = tf2::impl::getYaw(q);
+  }
+
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                       "[%s] State: %s | Pos: (%.2f, %.2f) | Yaw: %.2f | Dist: %.2f",
+                       robot_name_.c_str(), state_to_string(current_state).c_str(), x, y, yaw,
+                       current_distance_);
 
   switch (current_state)
   {
@@ -307,8 +367,8 @@ int main(int argc, char** argv)
 
     // Robot names are 1-indexed in this project
     params.robot_name = "robot_" + std::to_string(i + 1);
-    params.rotation_speed = 0.05;
-    params.distance_to_grasp_object = 0.05;
+    params.rotation_speed = 0.1;
+    params.distance_to_grasp_object = 0.35;
 
     auto node = std::make_shared<swarm_controller::RobotController>(params);
     nodes.push_back(node);

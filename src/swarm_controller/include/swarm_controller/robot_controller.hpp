@@ -1,6 +1,11 @@
 #ifndef SWARM_CONTROLLER_ROBOT_CONTROLLER_HPP_
 #define SWARM_CONTROLLER_ROBOT_CONTROLLER_HPP_
 
+#include <tf2/utils.h>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
+
+#include <geometry_msgs/msg/pose.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <mutex>
 #include <rclcpp/rclcpp.hpp>
@@ -8,6 +13,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <string>
 #include <swarm_model/robot_fsm.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <vector>
 
 namespace swarm_controller
@@ -40,6 +46,7 @@ class RobotController : public rclcpp::Node
 
  private:
   swarm_model::RobotFSM fsm_;
+  std::string robot_name_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr camera_sub_;
@@ -64,6 +71,13 @@ class RobotController : public rclcpp::Node
   void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
   void lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
   void control_loop();
+
+  // TF2
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+
+  std::mutex pose_mutex_;
+  geometry_msgs::msg::Pose robot_pose_;
 };
 
 }  // namespace swarm_controller
