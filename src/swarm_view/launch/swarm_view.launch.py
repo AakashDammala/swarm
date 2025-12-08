@@ -239,6 +239,7 @@ def generate_launch_description():
             f_out.write(f"  controller \"<extern>\"\n")
             f_out.write(f"  camera_width {cam_w}\n")
             f_out.write(f"  camera_height {cam_h}\n") 
+            f_out.write(f"  supervisor TRUE\n")
             f_out.write(f"  turretSlot [\n")
             f_out.write(f"    Lidar {{\n")
             f_out.write(f"      translation 0 0 0.05\n")
@@ -301,7 +302,7 @@ def generate_launch_description():
         robot_home_tf = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            arguments=[str(x_c), str(y_c), '0', str(rot_angle), '0', '0', 'world', f'{name}_home'],
+            arguments=[str(x_c), str(y_c), '0', str(rot_angle), '0', '0', 'world', f'{name}/home'],
             name=f'static_tf_{name}_home'
         )
         launch_nodes.append(robot_home_tf)
