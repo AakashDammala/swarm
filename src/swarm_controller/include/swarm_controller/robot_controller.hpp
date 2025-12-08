@@ -67,6 +67,9 @@ class RobotController : public rclcpp::Node
   void grasp_object();
   void release_object();
 
+  geometry_msgs::msg::Twist move_to_location(const geometry_msgs::msg::Pose& current_pose,
+                                             const geometry_msgs::msg::Pose& goal_pose);
+
   void move_robot(double linear_x, double angular_z);
   void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
   void lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg);

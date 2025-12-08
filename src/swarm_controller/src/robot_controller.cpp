@@ -143,35 +143,39 @@ void RobotController::grasp_object()
 {
   RCLCPP_INFO(this->get_logger(), "Grasping object...");
   move_robot(0.0, 0.0);  // Stop
-  // Simulate grasp time
-  // In real robot, trigger gripper.
-  // For now, infinite speed grasp:
+
+  // Simulate release time
+  rclcpp::sleep_for(std::chrono::seconds(2));
+
   fsm_.set_action_complete(true);
 }
 
 void RobotController::move_to_home()
 {
   RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Home...");
-  // Simplified: Rotate 180 (or blind turn) and move?
-  // Or just move backwards?
-  // Let's assume "Home" is just a state we reach after some time for this simulation
-  // since we lack localization.
 
-  // Hack: Just set at_home to true immediately for testing logic flow?
-  // Or better: Move for 2 seconds then set flag.
+  geometry_msgs::msg::Pose current_pose;
+  {
+    std::lock_guard<std::mutex> lock(pose_mutex_);
+    current_pose = robot_pose_;
+  }
 
-  static int home_ticks = 0;
-  move_robot(-0.05, 0.0);  // Move back
-  home_ticks++;
+  geometry_msgs::msg::Pose goal_pose;
+  goal_pose.position.x = 0.0;
+  goal_pose.position.y = 0.0;
+  goal_pose.orientation.w = 1.0;
 
-  if (home_ticks > 50)
-  {  // 5 seconds
+  auto cmd_vel = move_to_location(current_pose, goal_pose);
+
+  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0)
+  {
     fsm_.set_at_home(true);
-    home_ticks = 0;
+    move_robot(0.0, 0.0);
   }
   else
   {
     fsm_.set_at_home(false);
+    cmd_vel_pub_->publish(cmd_vel);
   }
 }
 
@@ -179,27 +183,90 @@ void RobotController::move_to_out()
 {
   RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Out...");
 
-  // Move forward somewhere else
-  static int out_ticks = 0;
-  move_robot(0.05, 0.1);  // Curve out
-  out_ticks++;
+  geometry_msgs::msg::Pose current_pose;
+  {
+    std::lock_guard<std::mutex> lock(pose_mutex_);
+    current_pose = robot_pose_;
+  }
 
-  if (out_ticks > 50)
+  geometry_msgs::msg::Pose goal_pose;
+  goal_pose.position.x = 0.7;
+  goal_pose.position.y = 0.0;
+  goal_pose.orientation.w = 1.0;
+
+  auto cmd_vel = move_to_location(current_pose, goal_pose);
+
+  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0)
   {
     fsm_.set_at_drop(true);
-    out_ticks = 0;
+    move_robot(0.0, 0.0);
   }
   else
   {
     fsm_.set_at_drop(false);
+    cmd_vel_pub_->publish(cmd_vel);
   }
 }
 
 void RobotController::release_object()
 {
   RCLCPP_INFO(this->get_logger(), "Releasing object...");
+
+  // Simulate release time
+  rclcpp::sleep_for(std::chrono::seconds(2));
+
   move_robot(0.0, 0.0);
   fsm_.set_action_complete(true);
+}
+
+geometry_msgs::msg::Twist RobotController::move_to_location(
+    const geometry_msgs::msg::Pose& current_pose, const geometry_msgs::msg::Pose& goal_pose)
+{
+  geometry_msgs::msg::Twist cmd_vel;
+
+  // Calculate distance
+  double dx = goal_pose.position.x - current_pose.position.x;
+  double dy = goal_pose.position.y - current_pose.position.y;
+  double dist = std::hypot(dx, dy);
+
+  // Check if reached (3cm threshold)
+  if (dist < 0.03)
+  {
+    return cmd_vel;  // Zero initialized
+  }
+
+  // Calculate target yaw
+  double target_yaw = std::atan2(dy, dx);
+
+  // Get current yaw
+  tf2::Quaternion q;
+  tf2::fromMsg(current_pose.orientation, q);
+  double current_yaw = tf2::impl::getYaw(q);
+
+  // Calculate yaw error
+  double yaw_error = target_yaw - current_yaw;
+  // Normalize to [-pi, pi]
+  while (yaw_error > M_PI) yaw_error -= 2 * M_PI;
+  while (yaw_error < -M_PI) yaw_error += 2 * M_PI;
+
+  // Control logic: Rotate first, then move straight
+  // Threshold for rotation alignment: 0.1 rad (~5.7 degrees)
+  if (std::abs(yaw_error) > 0.1)
+  {
+    // Rotate
+    // P-controller for rotation
+    cmd_vel.angular.z = 1.0 * yaw_error;
+    // Clamp angular velocity
+    if (cmd_vel.angular.z > 0.2) cmd_vel.angular.z = 0.2;
+    if (cmd_vel.angular.z < -0.2) cmd_vel.angular.z = -0.2;
+  }
+  else
+  {
+    // Move straight
+    cmd_vel.linear.x = 0.1;  // Safe constant speed
+  }
+
+  return cmd_vel;
 }
 
 void RobotController::move_robot(double linear_x, double angular_z)
