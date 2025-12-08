@@ -129,11 +129,11 @@ void RobotController::rotate_search_object()
   // Diagram says "not found -> rotate".
   if (!found_green)
   {
-    move_robot(0.0, -0.05);  // -0.05 omega
+    move_robot(0.0, -rotation_speed_);  // -0.05 omega
   }
   else
   {
-    move_robot(0.0, 0.0);  // Stop momentarily? Or just let next state handle it.
+    move_robot(0.0, rotation_speed_);  // Stop momentarily? Or just let next state handle it.
   }
 }
 
@@ -462,8 +462,8 @@ int main(int argc, char** argv)
 
     // Robot names are 1-indexed in this project
     params.robot_name = "robot_" + std::to_string(i + 1);
-    params.rotation_speed = 0.2;
-    params.distance_to_grasp_object = 0.30;
+    params.rotation_speed = 0.3;
+    params.distance_to_grasp_object = 0.35;
 
     auto node = std::make_shared<swarm_controller::RobotController>(params);
     nodes.push_back(node);
