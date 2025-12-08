@@ -9,9 +9,13 @@
 namespace swarm_controller
 {
 
+/**
+ * @brief Convert State enum to string
+ */
 std::string state_to_string(swarm_model::State state)
 {
-  switch (state) {
+  switch (state)
+  {
     case swarm_model::State::FIND_OBJECT:
       return "find_object";
     case swarm_model::State::APPROACH_OBJECT:
@@ -29,11 +33,11 @@ std::string state_to_string(swarm_model::State state)
   }
 }
 
-RobotController::RobotController(const RobotParams & params)
-: rclcpp::Node("robot_controller", params.robot_name),
-  robot_name_(params.robot_name),
-  rotation_speed_(params.rotation_speed),
-  distance_to_grasp_object_(params.distance_to_grasp_object)
+RobotController::RobotController(const RobotParams& params)
+    : rclcpp::Node("robot_controller", params.robot_name),
+      robot_name_(params.robot_name),
+      rotation_speed_(params.rotation_speed),
+      distance_to_grasp_object_(params.distance_to_grasp_object)
 {
   RCLCPP_INFO(this->get_logger(), "RobotController Initialized for %s", params.robot_name.c_str());
 
@@ -52,27 +56,29 @@ RobotController::RobotController(const RobotParams & params)
   // Since we are in /robot_X namespace, we subscribe to "robot_X/camera/image_color"
   std::string camera_topic = params.robot_name + "/camera/image_color";
   camera_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-    camera_topic, 8, std::bind(&RobotController::image_callback, this, std::placeholders::_1));
+      camera_topic, 8, std::bind(&RobotController::image_callback, this, std::placeholders::_1));
 
   // Subscribe to Lidar
   std::string scan_topic = params.robot_name + "/lidar";
   scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-    scan_topic, 10, std::bind(&RobotController::lidar_callback, this, std::placeholders::_1));
+      scan_topic, 10, std::bind(&RobotController::lidar_callback, this, std::placeholders::_1));
 
   // Initialize TF Listener
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   // run the timer callback at 20 Hz
-  timer_ = this->create_wall_timer(
-    std::chrono::milliseconds(50),
-    std::bind(&RobotController::control_loop, this));
+  timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
+                                   std::bind(&RobotController::control_loop, this));
 
   // Initialize Hoop Service Client
   std::string hoop_service_name = "/" + params.robot_name + "/set_hoop_level";
   hoop_service_client_ = this->create_client<std_srvs::srv::SetBool>(hoop_service_name);
 }
 
+/**
+ * @brief Scan the environment by rotating the robot
+ */
 void RobotController::scan_environment()
 {
   // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Scanning environment...");
@@ -82,8 +88,10 @@ void RobotController::scan_environment()
 void RobotController::lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
   float min_dist = 100.0;
-  for (size_t i = 0; i < msg->ranges.size(); ++i) {
-    if (min_dist > msg->ranges[i]) {
+  for (size_t i = 0; i < msg->ranges.size(); ++i)
+  {
+    if (min_dist > msg->ranges[i])
+    {
       min_dist = msg->ranges[i];
     }
   }
@@ -94,6 +102,9 @@ void RobotController::lidar_callback(const sensor_msgs::msg::LaserScan::SharedPt
   fsm_.set_distance_to_object(current_distance_);
 }
 
+/**
+ * @brief Rotate to search for the object (Green color)
+ */
 void RobotController::rotate_search_object()
 {
   // "send -0.05 omega cmd_vel"
@@ -101,14 +112,18 @@ void RobotController::rotate_search_object()
   bool found_green = false;
   {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (!center_pixels_.empty()) {
-      for (size_t i = 0; i < center_pixels_.size(); i += 3) {
-        if (i + 2 < center_pixels_.size()) {
+    if (!center_pixels_.empty())
+    {
+      for (size_t i = 0; i < center_pixels_.size(); i += 3)
+      {
+        if (i + 2 < center_pixels_.size())
+        {
           uint8_t r = center_pixels_[i];
           uint8_t g = center_pixels_[i + 1];
           uint8_t b = center_pixels_[i + 2];
 
-          if (g > 200 && r < 50 && b < 50) {
+          if (g > 200 && r < 50 && b < 50)
+          {
             found_green = true;
             break;
           }
@@ -121,30 +136,42 @@ void RobotController::rotate_search_object()
 
   // If found, FSM will switch state next loop.
   // Diagram says "not found -> rotate".
-  if (!found_green) {
+  if (!found_green)
+  {
     move_robot(0.0, -rotation_speed_);  // -0.05 omega
-  } else {
+  }
+  else
+  {
     move_robot(0.0, rotation_speed_);  // Stop momentarily? Or just let next state handle it.
   }
 }
 
+/**
+ * @brief Approach the detected object
+ */
 void RobotController::approach_object()
 {
   // "send 0.05 lin_vel till lidar distance < 0.05 m"
   move_robot(0.05, 0.0);
 }
 
+/**
+ * @brief Grasp the object using the hoop mechanism
+ */
 void RobotController::grasp_object()
 {
   // RCLCPP_INFO(this->get_logger(), "Grasping object...");
   move_robot(0.0, 0.0);  // Stop
 
   // Lower Hoop
-  if (hoop_service_client_->service_is_ready()) {
+  if (hoop_service_client_->service_is_ready())
+  {
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
     request->data = false;  // Down
     hoop_service_client_->async_send_request(request);
-  } else {
+  }
+  else
+  {
     RCLCPP_WARN(this->get_logger(), "Hoop service is not ready");
   }
 
@@ -154,6 +181,9 @@ void RobotController::grasp_object()
   fsm_.set_action_complete(true);
 }
 
+/**
+ * @brief Move the robot to the home position
+ */
 void RobotController::move_to_home()
 {
   // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Home...");
@@ -171,15 +201,21 @@ void RobotController::move_to_home()
 
   auto cmd_vel = move_to_location(current_pose, goal_pose);
 
-  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0) {
+  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0)
+  {
     fsm_.set_at_home(true);
     move_robot(0.0, 0.0);
-  } else {
+  }
+  else
+  {
     fsm_.set_at_home(false);
     cmd_vel_pub_->publish(cmd_vel);
   }
 }
 
+/**
+ * @brief Move the robot to the drop-off location (Out)
+ */
 void RobotController::move_to_out()
 {
   // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Out...");
@@ -197,25 +233,34 @@ void RobotController::move_to_out()
 
   auto cmd_vel = move_to_location(current_pose, goal_pose);
 
-  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0) {
+  if (cmd_vel.linear.x == 0.0 && cmd_vel.angular.z == 0.0)
+  {
     fsm_.set_at_drop(true);
     move_robot(0.0, 0.0);
-  } else {
+  }
+  else
+  {
     fsm_.set_at_drop(false);
     cmd_vel_pub_->publish(cmd_vel);
   }
 }
 
+/**
+ * @brief Release the object by raising the hoop
+ */
 void RobotController::release_object()
 {
   // RCLCPP_INFO(this->get_logger(), "Releasing object...");
 
   // Raise Hoop
-  if (hoop_service_client_->service_is_ready()) {
+  if (hoop_service_client_->service_is_ready())
+  {
     auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
     request->data = true;  // Up
     hoop_service_client_->async_send_request(request);
-  } else {
+  }
+  else
+  {
     RCLCPP_WARN(this->get_logger(), "Hoop service is not ready");
   }
 
@@ -227,7 +272,7 @@ void RobotController::release_object()
 }
 
 geometry_msgs::msg::Twist RobotController::move_to_location(
-  const geometry_msgs::msg::Pose & current_pose, const geometry_msgs::msg::Pose & goal_pose)
+    const geometry_msgs::msg::Pose& current_pose, const geometry_msgs::msg::Pose& goal_pose)
 {
   geometry_msgs::msg::Twist cmd_vel;
 
@@ -237,7 +282,8 @@ geometry_msgs::msg::Twist RobotController::move_to_location(
   double dist = std::hypot(dx, dy);
 
   // Check if reached (3cm threshold)
-  if (dist < 0.03) {
+  if (dist < 0.03)
+  {
     return cmd_vel;  // Zero initialized
   }
 
@@ -252,19 +298,34 @@ geometry_msgs::msg::Twist RobotController::move_to_location(
   // Calculate yaw error
   double yaw_error = target_yaw - current_yaw;
   // Normalize to [-pi, pi]
-  while (yaw_error > M_PI) {yaw_error -= 2 * M_PI;}
-  while (yaw_error < -M_PI) {yaw_error += 2 * M_PI;}
+  while (yaw_error > M_PI)
+  {
+    yaw_error -= 2 * M_PI;
+  }
+  while (yaw_error < -M_PI)
+  {
+    yaw_error += 2 * M_PI;
+  }
 
   // Control logic: Rotate first, then move straight
   // Threshold for rotation alignment: 0.1 rad (~5.7 degrees)
-  if (std::abs(yaw_error) > 0.1) {
+  if (std::abs(yaw_error) > 0.1)
+  {
     // Rotate
     // P-controller for rotation
     cmd_vel.angular.z = 1.0 * yaw_error;
     // Clamp angular velocity
-    if (cmd_vel.angular.z > 0.2) {cmd_vel.angular.z = 0.2;}
-    if (cmd_vel.angular.z < -0.2) {cmd_vel.angular.z = -0.2;}
-  } else {
+    if (cmd_vel.angular.z > 0.2)
+    {
+      cmd_vel.angular.z = 0.2;
+    }
+    if (cmd_vel.angular.z < -0.2)
+    {
+      cmd_vel.angular.z = -0.2;
+    }
+  }
+  else
+  {
     // Move straight
     cmd_vel.linear.x = 0.1;  // Safe constant speed
   }
@@ -310,12 +371,15 @@ void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr ms
   int bytes_per_pixel = 4;
 
   // Store the center 3 pixels for further processing
-  for (int y = cy - 1; y <= cy + 1; ++y) {
-    for (int x = cx - 1; x <= cx + 1; ++x) {
+  for (int y = cy - 1; y <= cy + 1; ++y)
+  {
+    for (int x = cx - 1; x <= cx + 1; ++x)
+    {
       int pixel_idx = y * step + x * bytes_per_pixel;
 
       // Safety check
-      if (pixel_idx + 3 < (int)msg->data.size()) {
+      if (pixel_idx + 3 < (int)msg->data.size())
+      {
         // bgra8 encoding: Blue, Green, Red, Alpha
         uint8_t blue = msg->data[pixel_idx];
         uint8_t green = msg->data[pixel_idx + 1];
@@ -342,11 +406,11 @@ void RobotController::image_callback(const sensor_msgs::msg::Image::SharedPtr ms
 void RobotController::control_loop()
 {
   // Get the robot's pose, from it's home frame to base_link frame
-  try {
+  try
+  {
     geometry_msgs::msg::TransformStamped t;
-    t = tf_buffer_->lookupTransform(
-      robot_name_ + "/home", robot_name_ + "/base_link",
-      tf2::TimePointZero);
+    t = tf_buffer_->lookupTransform(robot_name_ + "/home", robot_name_ + "/base_link",
+                                    tf2::TimePointZero);
 
     std::lock_guard<std::mutex> lock(pose_mutex_);
     robot_pose_.position.x = t.transform.translation.x;
@@ -356,11 +420,12 @@ void RobotController::control_loop()
 
     // RCLCPP_INFO(this->get_logger(), "Robot pose: x=%.2f, y=%.2f", t.transform.translation.x,
     //             t.transform.translation.y);
-  } catch (const tf2::TransformException & ex) {
-    RCLCPP_WARN_THROTTLE(
-      this->get_logger(), *this->get_clock(), 5000,
-      "Could not transform %s/base_link to %s/home: %s", robot_name_.c_str(),
-      robot_name_.c_str(), ex.what());
+  }
+  catch (const tf2::TransformException& ex)
+  {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "Could not transform %s/base_link to %s/home: %s", robot_name_.c_str(),
+                         robot_name_.c_str(), ex.what());
   }
 
   fsm_.update();
@@ -380,13 +445,13 @@ void RobotController::control_loop()
     yaw = tf2::impl::getYaw(q);
   }
 
-  RCLCPP_INFO_THROTTLE(
-    this->get_logger(), *this->get_clock(), 1000,
-    "[%s] State: %s | Pos: (%.2f, %.2f) | Yaw: %.2f | Dist: %.2f",
-    robot_name_.c_str(), state_to_string(current_state).c_str(), x, y, yaw,
-    current_distance_);
+  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                       "[%s] State: %s | Pos: (%.2f, %.2f) | Yaw: %.2f | Dist: %.2f",
+                       robot_name_.c_str(), state_to_string(current_state).c_str(), x, y, yaw,
+                       current_distance_);
 
-  switch (current_state) {
+  switch (current_state)
+  {
     case swarm_model::State::FIND_OBJECT:
       rotate_search_object();
       break;

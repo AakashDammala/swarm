@@ -1,3 +1,7 @@
+/**
+ * @file test_robot_controller.cpp
+ * @brief Unit tests for Robot Controller
+ */
 #include <gtest/gtest.h>
 
 #include <cmath>

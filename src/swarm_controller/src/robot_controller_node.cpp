@@ -6,7 +6,10 @@
 
 #include "swarm_controller/robot_controller.hpp"
 
-int main(int argc, char ** argv)
+/**
+ * @brief Main function
+ */
+int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
 
@@ -20,7 +23,8 @@ int main(int argc, char ** argv)
 
   RCLCPP_INFO(param_node->get_logger(), "Spawning %d robot controllers...", num_robots);
 
-  for (int i = 0; i < num_robots; ++i) {
+  for (int i = 0; i < num_robots; ++i)
+  {
     swarm_controller::RobotParams params;
 
     // Robot names are 1-indexed in this project

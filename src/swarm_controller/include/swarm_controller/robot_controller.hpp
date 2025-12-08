@@ -1,6 +1,11 @@
 #ifndef SWARM_CONTROLLER_ROBOT_CONTROLLER_HPP_
 #define SWARM_CONTROLLER_ROBOT_CONTROLLER_HPP_
 
+/**
+ * @file robot_controller.hpp
+ * @brief Header for Robot Controller
+ */
+
 #include <tf2/utils.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -42,19 +47,25 @@ struct RobotParams
  */
 class RobotController : public rclcpp::Node
 {
-public:
+ public:
   /**
    * @brief Construct a new Robot Controller object
    *
    * @param params Configuration parameters for the robot
    */
-  explicit RobotController(const RobotParams & params);
+  explicit RobotController(const RobotParams& params);
 
-  static geometry_msgs::msg::Twist move_to_location(
-    const geometry_msgs::msg::Pose & current_pose,
-    const geometry_msgs::msg::Pose & goal_pose);
+  /**
+   * @brief Calculate velocity command to move from current pose to goal pose
+   *
+   * @param current_pose Current robot pose
+   * @param goal_pose Target pose
+   * @return geometry_msgs::msg::Twist Velocity command
+   */
+  static geometry_msgs::msg::Twist move_to_location(const geometry_msgs::msg::Pose& current_pose,
+                                                    const geometry_msgs::msg::Pose& goal_pose);
 
-private:
+ private:
   swarm_model::RobotFSM fsm_;
   std::string robot_name_;
   rclcpp::TimerBase::SharedPtr timer_;
