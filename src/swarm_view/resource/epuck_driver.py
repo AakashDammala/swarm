@@ -43,7 +43,20 @@ class EpuckDriver:
         self.__right_motor.setPosition(float('inf'))
         self.__right_motor.setVelocity(0)
         
+        # Lift Motor
+        self.__lift_motor = self.__robot.getDevice('lift_motor')
+        if self.__lift_motor:
+             # Initialize to lifted position
+             self.__lift_motor.setPosition(0.1)
+             self.__lift_motor.setVelocity(0.05)
+        else:
+             self.__node.get_logger().warn('lift_motor not found on robot')
+        
         self.__target_twist = Twist()
+        
+        # Service for Hoop
+        from std_srvs.srv import SetBool
+        self.__node.create_service(SetBool, 'set_hoop_level', self.__set_hoop_callback)
         
         # 5. Create Subscription
         # Since the node is in a namespace, 'cmd_vel' becomes '/robot_X/cmd_vel'
@@ -107,3 +120,14 @@ class EpuckDriver:
                 t.transform.rotation.w = q_w
                 
                 self.__tf_broadcaster.sendTransform(t)
+
+    def __set_hoop_callback(self, request, response):
+        if self.__lift_motor:
+            target_pos = 0.2 if request.data else 0.0
+            self.__lift_motor.setPosition(target_pos)
+            response.success = True
+            response.message = f"Hoop moved to {'UP' if request.data else 'DOWN'} position ({target_pos} m)"
+        else:
+            response.success = False
+            response.message = "Lift motor not found"
+        return response

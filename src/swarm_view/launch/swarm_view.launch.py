@@ -222,7 +222,7 @@ def generate_launch_description():
                 f_out.write(f"    }}\n")
                 f_out.write(f"  ]\n")
                 f_out.write(f"  boundingObject Box {{ size {waste_size} {waste_size} {waste_size} }}\n")
-                f_out.write(f"  physics Physics {{ mass 0.1 }}\n")
+                f_out.write(f"  physics Physics {{ mass 0.0001 }}\n")
                 f_out.write(f"}}\n")
             
             # --- ROBOT ---
@@ -249,6 +249,87 @@ def generate_launch_description():
             f_out.write(f"      minRange 0.05\n")
             f_out.write(f"      maxRange 2.0\n")
             f_out.write(f"      type \"fixed\"\n")
+            f_out.write(f"    }}\n")
+            
+            # --- HOOP MECHANISM ---
+            # Dimensions
+            h_width = waste_size + 0.07      # Inner width (Y-axis) -> ~0.14m
+            h_length = 0.16                  # Inner length (X-axis) -> Robot (~8cm) + Block (10cm) + Margin (5cm)
+            h_thickness = 0.003              # Thickness of the hoop walls
+            h_height = 0.01                  # Height of the hoop walls
+            
+            # Center of the hoop relative to the robot center (turret)
+            # We want the back wall to be behind the robot (~ -0.06m)
+            # Front wall will be at -0.06 + 0.23 = +0.17m
+            # Center X = (-0.06 + 0.17) / 2 = 0.055
+            h_center_x = 0.045
+
+            f_out.write(f"    SliderJoint {{\n")
+            f_out.write(f"      jointParameters JointParameters {{ axis 0 0 1 }}\n")
+            f_out.write(f"      device [\n")
+            f_out.write(f"        LinearMotor {{\n")
+            f_out.write(f"          name \"lift_motor\"\n")
+            f_out.write(f"          minPosition 0.0\n")
+            f_out.write(f"          maxPosition 0.05\n")
+            f_out.write(f"        }}\n")
+            f_out.write(f"      ]\n")
+            f_out.write(f"      endPoint Solid {{\n")
+            f_out.write(f"        translation {h_center_x} 0 -0.04\n") # Adjusted relative to turret slot
+            f_out.write(f"        children [\n")
+            
+            # Helper for visual shapes
+            def write_hoop_visual(sx, sy, px, py):
+                 f_out.write(f"          Transform {{\n")
+                 f_out.write(f"            translation {px} {py} 0\n")
+                 f_out.write(f"            children [\n")
+                 f_out.write(f"              Shape {{\n")
+                 f_out.write(f"                appearance Appearance {{ material Material {{ diffuseColor 0.1 0.1 0.1 }} }}\n")
+                 f_out.write(f"                geometry Box {{ size {sx} {sy} {h_height} }}\n")
+                 f_out.write(f"              }}\n")
+                 f_out.write(f"            ]\n")
+                 f_out.write(f"          }}\n")
+
+            # Front Wall (At +Length/2) - Spans Width
+            write_hoop_visual(h_thickness, h_width + 2*h_thickness, h_length/2 + h_thickness/2, 0)
+            
+            # Back Wall (At -Length/2) - Spans Width
+            write_hoop_visual(h_thickness, h_width + 2*h_thickness, -(h_length/2 + h_thickness/2), 0)
+            
+            # Left Wall (At +Width/2) - Spans Length (between front/back walls)
+            write_hoop_visual(h_length, h_thickness, 0, h_width/2 + h_thickness/2)
+            
+            # Right Wall (At -Width/2) - Spans Length
+            write_hoop_visual(h_length, h_thickness, 0, -(h_width/2 + h_thickness/2))
+            
+            f_out.write(f"        ]\n")
+            
+            f_out.write(f"        boundingObject Group {{\n")
+            f_out.write(f"          children [\n")
+
+            # Helper for collision shapes
+            def write_hoop_col(sx, sy, px, py):
+                 f_out.write(f"            Transform {{\n")
+                 f_out.write(f"              translation {px} {py} 0\n")
+                 f_out.write(f"              children [\n")
+                 f_out.write(f"                Box {{ size {sx} {sy} {h_height} }}\n")
+                 f_out.write(f"              ]\n")
+                 f_out.write(f"            }}\n")
+
+            # Front Wall
+            write_hoop_col(h_thickness, h_width + 2*h_thickness, h_length/2 + h_thickness/2, 0)
+            # Back Wall
+            write_hoop_col(h_thickness, h_width + 2*h_thickness, -(h_length/2 + h_thickness/2), 0)
+            # Left Wall
+            write_hoop_col(h_length, h_thickness, 0, h_width/2 + h_thickness/2)
+            # Right Wall
+            write_hoop_col(h_length, h_thickness, 0, -(h_width/2 + h_thickness/2))
+
+            f_out.write(f"          ]\n")
+            f_out.write(f"        }}\n")
+
+            f_out.write(f"        name \"hoop_assembly\"\n")
+            f_out.write(f"        physics Physics {{ mass 0.0001 }}\n")
+            f_out.write(f"      }}\n")
             f_out.write(f"    }}\n")
             f_out.write(f"  ]\n")
             f_out.write(f"}}\n\n")
