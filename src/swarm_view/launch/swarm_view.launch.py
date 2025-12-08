@@ -193,27 +193,55 @@ def generate_launch_description():
             f_out.write(f"}}\n")
             
             # --- RADIOACTIVE WASTE ---
+            placed_waste = [] # List of tuples (x, y) for this room
             for w in range(num_waste):
                 # Random position within room inner bounds
                 # Room x-range: [x_c - room_size/2 + wall_thick, x_c + room_size/2 - wall_thick]
                 # Room y-range: [y_c - room_size/2 + wall_thick, y_c + room_size/2 - wall_thick]
-                # Margin for waste size: waste_size/2 + safe margin
-                margin = wall_thick + waste_size/2 + 0.05
+                # Margin for waste size: waste_size/2 + safe margin (0.1m)
+                # This ensures distance from the wall
+                margin = wall_thick + waste_size/2 + 0.1
                 spawn_limit = room_size/2 - margin
                 
-                # Ensure we don't spawn on top of the robot (at center)
-                # Simple retry logic or keep-out zone
+                # Ensure we don't spawn on top of the robot or other waste
+                
                 valid_pos = False
                 w_x, w_y = 0, 0
-                while not valid_pos:
+                max_retries = 100
+                retry_count = 0
+                
+                while not valid_pos and retry_count < max_retries:
+                    retry_count += 1
                     w_x = x_c + random.uniform(-spawn_limit, spawn_limit)
                     w_y = y_c + random.uniform(-spawn_limit, spawn_limit)
+                    
                     # Check distance to center (robot spawn is at x_c, y_c)
-                    dist = math.sqrt((w_x - x_c)**2 + (w_y - y_c)**2)
-                    if dist > 0.2: # Keep 20cm away from center
-                        valid_pos = True
+                    # Robot radius ~0.04m, Waste radius ~0.05m. +0.1m buffer -> ~0.2m center-to-center
+                    dist_to_robot = math.sqrt((w_x - x_c)**2 + (w_y - y_c)**2)
+                    
+                    if dist_to_robot < 0.2:
+                        continue
 
-                f_out.write(f"Solid {{\n")
+                    # Check against other placed waste
+                    # We want 0.1m GAP between objects.
+                    # Center-to-center distance must be > (waste_size/2 + waste_size/2 + 0.1) = waste_size + 0.1
+                    collision = False
+                    min_dist_between_objects = waste_size + 0.1
+                    
+                    for (px, py) in placed_waste:
+                        d = math.sqrt((w_x - px)**2 + (w_y - py)**2)
+                        if d < min_dist_between_objects:
+                            collision = True
+                            break
+                    
+                    if not collision:
+                        valid_pos = True
+                        placed_waste.append((w_x, w_y))
+
+                if not valid_pos:
+                    print(f"Warning: Could not place waste {w} in room {i} after {max_retries} retries")
+                else: 
+                     f_out.write(f"Solid {{\n")
                 f_out.write(f"  translation {w_x} {w_y} {waste_size/2}\n")
                 f_out.write(f"  children [\n")
                 f_out.write(f"    Shape {{\n")

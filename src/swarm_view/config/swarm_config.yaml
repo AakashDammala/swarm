@@ -2,7 +2,7 @@
 
 
 # Number of rooms to generate (and robots to spawn)
-num_rooms: 1
+num_rooms: 40
 
 world_setup:
   arena_width: 10
@@ -18,9 +18,9 @@ generation_params:
   row_spacing: 2.0
 
 waste_params:
-  num_waste_per_room: 5
+  num_waste_per_room: 3
   waste_block_size: 0.03
-  random_seed: 5 # < 0 for random, >= 0 for fixed seed
+  random_seed: 15 # < 0 for random, >= 0 for fixed seed
 
 robot_params:
   camera_width: 33 # made it an odd number to get the center pixel

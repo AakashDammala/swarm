@@ -75,7 +75,7 @@ RobotController::RobotController(const RobotParams& params)
 
 void RobotController::scan_environment()
 {
-  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Scanning environment...");
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Scanning environment...");
   move_robot(0.0, 0.5);
 }
 
@@ -90,7 +90,7 @@ void RobotController::lidar_callback(const sensor_msgs::msg::LaserScan::SharedPt
     }
   }
 
-  RCLCPP_INFO(this->get_logger(), "Minimum distance: %.2f", min_dist);
+  // RCLCPP_INFO(this->get_logger(), "Minimum distance: %.2f", min_dist);
 
   current_distance_ = min_dist;
   fsm_.set_distance_to_object(current_distance_);
@@ -145,7 +145,7 @@ void RobotController::approach_object()
 
 void RobotController::grasp_object()
 {
-  RCLCPP_INFO(this->get_logger(), "Grasping object...");
+  // RCLCPP_INFO(this->get_logger(), "Grasping object...");
   move_robot(0.0, 0.0);  // Stop
 
   // Lower Hoop
@@ -168,7 +168,7 @@ void RobotController::grasp_object()
 
 void RobotController::move_to_home()
 {
-  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Home...");
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Home...");
 
   geometry_msgs::msg::Pose current_pose;
   {
@@ -197,7 +197,7 @@ void RobotController::move_to_home()
 
 void RobotController::move_to_out()
 {
-  RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Out...");
+  // RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 2000, "Moving Out...");
 
   geometry_msgs::msg::Pose current_pose;
   {
@@ -226,7 +226,7 @@ void RobotController::move_to_out()
 
 void RobotController::release_object()
 {
-  RCLCPP_INFO(this->get_logger(), "Releasing object...");
+  // RCLCPP_INFO(this->get_logger(), "Releasing object...");
 
   // Raise Hoop
   if (hoop_service_client_->service_is_ready())
@@ -463,7 +463,7 @@ int main(int argc, char** argv)
     // Robot names are 1-indexed in this project
     params.robot_name = "robot_" + std::to_string(i + 1);
     params.rotation_speed = 0.2;
-    params.distance_to_grasp_object = 0.35;
+    params.distance_to_grasp_object = 0.30;
 
     auto node = std::make_shared<swarm_controller::RobotController>(params);
     nodes.push_back(node);
