@@ -1,5 +1,5 @@
 <map id="swarm_controller::RobotController" name="swarm_controller::RobotController">
-<area shape="rect" id="node1" title="Robot Controller Node." alt="" coords="19,292,265,443"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,79,108,156"/>
-<area shape="rect" id="node3" href="$classswarm__model_1_1RobotFSM.html" title=" " alt="" coords="132,5,325,229"/>
+<area shape="rect" id="node1" title="Robot Controller Node." alt="" coords="21,380,266,780"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,123,108,200"/>
+<area shape="rect" id="node3" href="$classswarm__model_1_1RobotFSM.html" title="Robot Finite State Machine Class." alt="" coords="132,5,328,317"/>
 </map>

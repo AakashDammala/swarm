@@ -67,7 +67,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
@@ -77,28 +76,34 @@ $(function() {
 
 <p>Implementation of the Robot Controller Node.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;geometry_msgs/msg/twist.hpp&gt;</code><br />
-<code>#include &lt;rclcpp/rclcpp.hpp&gt;</code><br />
-<code>#include &lt;<a class="el" href="robot__fsm_8hpp_source.html">swarm_model/robot_fsm.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="robot__controller_8hpp_source.html">swarm_controller/robot_controller.hpp</a>&quot;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for robot_controller.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="robot__controller_8cpp__incl.png" border="0" usemap="#asrc_2swarm__controller_2src_2robot__controller_8cpp" alt=""/></div>
 <map name="asrc_2swarm__controller_2src_2robot__controller_8cpp" id="asrc_2swarm__controller_2src_2robot__controller_8cpp">
-<area shape="rect" title="Implementation of the Robot Controller Node." alt="" coords="229,5,407,47"/>
-<area shape="rect" title=" " alt="" coords="5,95,228,121"/>
-<area shape="rect" title=" " alt="" coords="252,95,384,121"/>
-<area shape="rect" href="robot__fsm_8hpp.html" title="Header file for the Robot Finite State Machine." alt="" coords="408,95,620,121"/>
-<area shape="rect" title=" " alt="" coords="474,169,554,196"/>
+<area shape="rect" title="Implementation of the Robot Controller Node." alt="" coords="1211,5,1390,47"/>
+<area shape="rect" href="robot__controller_8hpp.html" title="Header for Robot Controller." alt="" coords="1143,95,1317,136"/>
+<area shape="rect" title=" " alt="" coords="1341,102,1404,129"/>
+<area shape="rect" title=" " alt="" coords="5,191,89,218"/>
+<area shape="rect" title=" " alt="" coords="114,191,234,218"/>
+<area shape="rect" title=" " alt="" coords="258,191,461,218"/>
+<area shape="rect" title=" " alt="" coords="485,191,708,218"/>
+<area shape="rect" title=" " alt="" coords="732,191,955,218"/>
+<area shape="rect" title=" " alt="" coords="978,191,1042,218"/>
+<area shape="rect" title=" " alt="" coords="1067,191,1199,218"/>
+<area shape="rect" title=" " alt="" coords="1223,191,1435,218"/>
+<area shape="rect" title=" " alt="" coords="1459,184,1633,225"/>
+<area shape="rect" title=" " alt="" coords="1658,191,1845,218"/>
+<area shape="rect" title=" " alt="" coords="1869,191,1927,218"/>
+<area shape="rect" href="robot__fsm_8hpp.html" title="Header file for the Robot Finite State Machine." alt="" coords="1951,191,2163,218"/>
+<area shape="rect" title=" " alt="" coords="2187,184,2361,225"/>
+<area shape="rect" title=" " alt="" coords="2385,191,2448,218"/>
+<area shape="rect" title=" " alt="" coords="2017,273,2097,300"/>
 </map>
 </div>
 </div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html">swarm_controller::RobotController</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Robot Controller Node.  <a href="classswarm__controller_1_1RobotController.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespaceswarm__controller"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceswarm__controller.html">swarm_controller</a></td></tr>
@@ -106,41 +111,13 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="robot__controller_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
-<tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a966dac466f4f87c9715a22dbb23247ef"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceswarm__controller.html#a966dac466f4f87c9715a22dbb23247ef">swarm_controller::state_to_string</a> (<a class="el" href="namespaceswarm__model.html#a621dd66fb6350c1bcb4d3398cbdb3553">swarm_model::State</a> state)</td></tr>
+<tr class="memdesc:a966dac466f4f87c9715a22dbb23247ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert State enum to string.  <a href="namespaceswarm__controller.html#a966dac466f4f87c9715a22dbb23247ef">More...</a><br /></td></tr>
+<tr class="separator:a966dac466f4f87c9715a22dbb23247ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the Robot Controller Node. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a3c04138a5bfe5d72780bb7e82a18e627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c04138a5bfe5d72780bb7e82a18e627">&#9670;&nbsp;</a></span>main()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1

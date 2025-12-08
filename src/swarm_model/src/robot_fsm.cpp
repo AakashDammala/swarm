@@ -11,7 +11,14 @@ namespace swarm_model
  * @brief Construct a new RobotFSM object
  */
 RobotFSM::RobotFSM()
-    : current_state_(State::IDLE), object_detected_(false), obstacle_detected_(false)
+: current_state_(State::FIND_OBJECT),
+  object_detected_(false),
+  distance_to_object_(100.0),      // Default far away
+  at_home_(false),
+  at_drop_(false),
+  action_complete_(false),
+  holding_object_(false),
+  min_distance_to_grasp_(0.05)      // Default to 0.05 if not set
 {
 }
 
@@ -20,22 +27,54 @@ RobotFSM::RobotFSM()
  */
 void RobotFSM::update()
 {
-  switch (current_state_)
-  {
-    case State::IDLE:
-      current_state_ = State::SEARCHING;
+  switch (current_state_) {
+    case State::FIND_OBJECT:
+      if (object_detected_) {
+        current_state_ = State::APPROACH_OBJECT;
+      }
       break;
-    case State::SEARCHING:
-      search();
+
+    case State::APPROACH_OBJECT:
+      // Logic: if dist <= min_dist, grasp
+      if (distance_to_object_ <= min_distance_to_grasp_) {
+        current_state_ = State::GRASP_OBJECT;
+        action_complete_ = false;  // Reset for the new action
+      }
+      // Note: if object lost, maybe go back to SEARCH?
+      // For now, adhere to simple diagram which transitions only on distance.
+      // Ideally we check if object_detected_ is still true, but stick to diagram.
       break;
-    case State::COLLECTING:
-      collect();
+
+    case State::GRASP_OBJECT:
+      if (action_complete_) {
+        holding_object_ = true;
+        current_state_ = State::MOVE_HOME;
+      }
       break;
-    case State::DUMPING:
-      dump();
+
+    case State::MOVE_HOME:
+      if (at_home_) {
+        if (holding_object_) {
+          current_state_ = State::MOVE_OUT;
+        } else {
+          // If we came back home after releasing (or empty), go search again
+          current_state_ = State::FIND_OBJECT;
+        }
+      }
       break;
-    case State::AVOIDING:
-      avoid();
+
+    case State::MOVE_OUT:
+      if (at_drop_) {
+        current_state_ = State::RELEASE_OBJECT;
+        action_complete_ = false;  // Reset for action
+      }
+      break;
+
+    case State::RELEASE_OBJECT:
+      if (action_complete_) {
+        holding_object_ = false;
+        current_state_ = State::MOVE_HOME;
+      }
       break;
   }
 }
@@ -44,65 +83,42 @@ void RobotFSM::update()
  * @brief Get the current state
  * @return State Current state
  */
-State RobotFSM::get_state() const { return current_state_; }
+State RobotFSM::get_state() const {return current_state_;}
 
 /**
  * @brief Set object detected status
  * @param detected True if object is detected
  */
-void RobotFSM::set_object_detected(bool detected) { object_detected_ = detected; }
+void RobotFSM::set_object_detected(bool detected) {object_detected_ = detected;}
 
 /**
- * @brief Set obstacle detected status
- * @param detected True if obstacle is detected
+ * @brief Set distance to object
+ * @param distance Distance in meters
  */
-void RobotFSM::set_obstacle_detected(bool detected) { obstacle_detected_ = detected; }
+void RobotFSM::set_distance_to_object(double distance) {distance_to_object_ = distance;}
 
 /**
- * @brief Search behavior logic
+ * @brief Set at home status
+ * @param at_home True if robot is at home
  */
-void RobotFSM::search()
-{
-  // Pure logic: if object detected, switch to collecting
-  if (object_detected_)
-  {
-    current_state_ = State::COLLECTING;
-  }
-  else if (obstacle_detected_)
-  {
-    current_state_ = State::AVOIDING;
-  }
-}
+void RobotFSM::set_at_home(bool at_home) {at_home_ = at_home;}
 
 /**
- * @brief Collect behavior logic
+ * @brief Set at drop zone status
+ * @param at_drop True if robot is at drop zone
  */
-void RobotFSM::collect()
-{
-  // Logic to transition to DUMPING (simplified for stub)
-  // In real logic, this would depend on whether we grabbed it
-  current_state_ = State::DUMPING;
-}
+void RobotFSM::set_at_drop(bool at_drop) {at_drop_ = at_drop;}
 
 /**
- * @brief Dump behavior logic
+ * @brief Set action complete status
+ * @param complete True if action (grasp/release) is complete
  */
-void RobotFSM::dump()
-{
-  // Logic to transition to SEARCHING
-  current_state_ = State::SEARCHING;
-}
+void RobotFSM::set_action_complete(bool complete) {action_complete_ = complete;}
 
 /**
- * @brief Avoid behavior logic
+ * @brief Set minimum distance to grasp object
+ * @param distance Distance in meters
  */
-void RobotFSM::avoid()
-{
-  // Logic to transition back to previous state or SEARCHING
-  if (!obstacle_detected_)
-  {
-    current_state_ = State::SEARCHING;
-  }
-}
+void RobotFSM::set_min_distance_to_grasp(double distance) {min_distance_to_grasp_ = distance;}
 
 }  // namespace swarm_model

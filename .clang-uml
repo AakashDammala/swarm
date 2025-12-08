@@ -2,6 +2,7 @@ query_driver: /usr/bin/c++
 add_compile_flags:
   - -std=c++17
   - -include/home/aakash/swarm/UML/mock_logging.hpp
+compilation_database_dir: .
 output_directory: UML
 diagrams:
   swarm_class_diagram:

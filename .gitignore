@@ -3,4 +3,5 @@ build/
 install/
 log/
 .cache/
-*/webots_ros2/*
+**/webots_ros2/*
+**/__pycache__/

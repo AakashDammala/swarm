@@ -68,6 +68,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classswarm__controller_1_1RobotController-members.html">List of all members</a>  </div>
@@ -78,12 +79,14 @@ $(function() {
 
 <p>Robot Controller Node.  
  <a href="classswarm__controller_1_1RobotController.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="robot__controller_8hpp_source.html">robot_controller.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for swarm_controller::RobotController:</div>
 <div class="dyncontent">
 <div class="center"><img src="classswarm__controller_1_1RobotController__inherit__graph.png" border="0" usemap="#aswarm__controller_1_1RobotController_inherit__map" alt="Inheritance graph"/></div>
 <map name="aswarm__controller_1_1RobotController_inherit__map" id="aswarm__controller_1_1RobotController_inherit__map">
-<area shape="rect" title="Robot Controller Node." alt="" coords="5,131,251,296"/>
+<area shape="rect" title="Robot Controller Node." alt="" coords="5,131,251,531"/>
 <area shape="rect" title=" " alt="" coords="77,5,179,83"/>
 </map>
 </div>
@@ -92,26 +95,53 @@ Collaboration diagram for swarm_controller::RobotController:</div>
 <div class="dyncontent">
 <div class="center"><img src="classswarm__controller_1_1RobotController__coll__graph.png" border="0" usemap="#aswarm__controller_1_1RobotController_coll__map" alt="Collaboration graph"/></div>
 <map name="aswarm__controller_1_1RobotController_coll__map" id="aswarm__controller_1_1RobotController_coll__map">
-<area shape="rect" title="Robot Controller Node." alt="" coords="19,292,265,443"/>
-<area shape="rect" title=" " alt="" coords="5,79,108,156"/>
-<area shape="rect" href="classswarm__model_1_1RobotFSM.html" title=" " alt="" coords="132,5,325,229"/>
+<area shape="rect" title="Robot Controller Node." alt="" coords="21,380,266,780"/>
+<area shape="rect" title=" " alt="" coords="5,123,108,200"/>
+<area shape="rect" href="classswarm__model_1_1RobotFSM.html" title="Robot Finite State Machine Class." alt="" coords="132,5,328,317"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad69ccddf1a4bfd100b4143428ebca9ea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#ad69ccddf1a4bfd100b4143428ebca9ea">RobotController</a> ()</td></tr>
-<tr class="memdesc:ad69ccddf1a4bfd100b4143428ebca9ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Robot Controller object.  <a href="classswarm__controller_1_1RobotController.html#ad69ccddf1a4bfd100b4143428ebca9ea">More...</a><br /></td></tr>
-<tr class="separator:ad69ccddf1a4bfd100b4143428ebca9ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7c0603ce7a47cbb91708b1a81bcefaf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#ad7c0603ce7a47cbb91708b1a81bcefaf">RobotController</a> (const <a class="el" href="structswarm__controller_1_1RobotParams.html">RobotParams</a> &amp;params)</td></tr>
+<tr class="memdesc:ad7c0603ce7a47cbb91708b1a81bcefaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Robot Controller object.  <a href="classswarm__controller_1_1RobotController.html#ad7c0603ce7a47cbb91708b1a81bcefaf">More...</a><br /></td></tr>
+<tr class="separator:ad7c0603ce7a47cbb91708b1a81bcefaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aa390264bc588f6e1dcac2c4993547c50"><td class="memItemLeft" align="right" valign="top">static geometry_msgs::msg::Twist&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aa390264bc588f6e1dcac2c4993547c50">move_to_location</a> (const geometry_msgs::msg::Pose &amp;current_pose, const geometry_msgs::msg::Pose &amp;goal_pose)</td></tr>
+<tr class="memdesc:aa390264bc588f6e1dcac2c4993547c50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate velocity command to move from current pose to goal pose.  <a href="classswarm__controller_1_1RobotController.html#aa390264bc588f6e1dcac2c4993547c50">More...</a><br /></td></tr>
+<tr class="separator:aa390264bc588f6e1dcac2c4993547c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:a6dfc5d59953aa709d190e45ef712cf8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a6dfc5d59953aa709d190e45ef712cf8a">scan_environment</a> ()</td></tr>
+<tr class="memdesc:a6dfc5d59953aa709d190e45ef712cf8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scan the environment by rotating the robot.  <a href="classswarm__controller_1_1RobotController.html#a6dfc5d59953aa709d190e45ef712cf8a">More...</a><br /></td></tr>
 <tr class="separator:a6dfc5d59953aa709d190e45ef712cf8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a702ca80d8c771ec04c171d3a1a76a7fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a702ca80d8c771ec04c171d3a1a76a7fa">detect_object</a> ()</td></tr>
-<tr class="separator:a702ca80d8c771ec04c171d3a1a76a7fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f3e904b3f599c528f15b5c783856567"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a2f3e904b3f599c528f15b5c783856567">rotate_search_object</a> ()</td></tr>
+<tr class="memdesc:a2f3e904b3f599c528f15b5c783856567"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotate to search for the object (Green color)  <a href="classswarm__controller_1_1RobotController.html#a2f3e904b3f599c528f15b5c783856567">More...</a><br /></td></tr>
+<tr class="separator:a2f3e904b3f599c528f15b5c783856567"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb7a463cb023734456ddc5ccdad5c181"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#acb7a463cb023734456ddc5ccdad5c181">approach_object</a> ()</td></tr>
+<tr class="memdesc:acb7a463cb023734456ddc5ccdad5c181"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approach the detected object.  <a href="classswarm__controller_1_1RobotController.html#acb7a463cb023734456ddc5ccdad5c181">More...</a><br /></td></tr>
+<tr class="separator:acb7a463cb023734456ddc5ccdad5c181"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0e4122812e039f501d950ed602e5841"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aa0e4122812e039f501d950ed602e5841">move_to_home</a> ()</td></tr>
+<tr class="memdesc:aa0e4122812e039f501d950ed602e5841"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the robot to the home position.  <a href="classswarm__controller_1_1RobotController.html#aa0e4122812e039f501d950ed602e5841">More...</a><br /></td></tr>
+<tr class="separator:aa0e4122812e039f501d950ed602e5841"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa8d35174b79079304d6d26a50733bc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aaa8d35174b79079304d6d26a50733bc4">move_to_out</a> ()</td></tr>
+<tr class="memdesc:aaa8d35174b79079304d6d26a50733bc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the robot to the drop-off location (Out)  <a href="classswarm__controller_1_1RobotController.html#aaa8d35174b79079304d6d26a50733bc4">More...</a><br /></td></tr>
+<tr class="separator:aaa8d35174b79079304d6d26a50733bc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef25494158fad3ae2867badc9b83c9c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aef25494158fad3ae2867badc9b83c9c2">grasp_object</a> ()</td></tr>
+<tr class="memdesc:aef25494158fad3ae2867badc9b83c9c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Grasp the object using the hoop mechanism.  <a href="classswarm__controller_1_1RobotController.html#aef25494158fad3ae2867badc9b83c9c2">More...</a><br /></td></tr>
+<tr class="separator:aef25494158fad3ae2867badc9b83c9c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a412220a22390fa563f661e499eced1c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a412220a22390fa563f661e499eced1c0">release_object</a> ()</td></tr>
+<tr class="memdesc:a412220a22390fa563f661e499eced1c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release the object by raising the hoop.  <a href="classswarm__controller_1_1RobotController.html#a412220a22390fa563f661e499eced1c0">More...</a><br /></td></tr>
+<tr class="separator:a412220a22390fa563f661e499eced1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2797bfda2a43254f051698d0223a3766"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a2797bfda2a43254f051698d0223a3766">move_robot</a> (double linear_x, double angular_z)</td></tr>
 <tr class="separator:a2797bfda2a43254f051698d0223a3766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa06ff2db4ec7ab1746589e310ccb3b30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aa06ff2db4ec7ab1746589e310ccb3b30">image_callback</a> (const sensor_msgs::msg::Image::SharedPtr msg)</td></tr>
+<tr class="separator:aa06ff2db4ec7ab1746589e310ccb3b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6555f98c14df7eeddae202324ecbf2b6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a6555f98c14df7eeddae202324ecbf2b6">lidar_callback</a> (const sensor_msgs::msg::LaserScan::SharedPtr msg)</td></tr>
+<tr class="separator:a6555f98c14df7eeddae202324ecbf2b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab686ffa730d5093bd49ca0a978e48bf8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#ab686ffa730d5093bd49ca0a978e48bf8">control_loop</a> ()</td></tr>
 <tr class="separator:ab686ffa730d5093bd49ca0a978e48bf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -119,17 +149,45 @@ Private Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a67e023edb361def13ad2a66b2534bc2e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classswarm__model_1_1RobotFSM.html">swarm_model::RobotFSM</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a67e023edb361def13ad2a66b2534bc2e">fsm_</a></td></tr>
 <tr class="separator:a67e023edb361def13ad2a66b2534bc2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90fd788b445f9e61566fc27ab7659222"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a90fd788b445f9e61566fc27ab7659222">robot_name_</a></td></tr>
+<tr class="separator:a90fd788b445f9e61566fc27ab7659222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebb44560ded5d2715866f1f01d0a4810"><td class="memItemLeft" align="right" valign="top">rclcpp::TimerBase::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aebb44560ded5d2715866f1f01d0a4810">timer_</a></td></tr>
 <tr class="separator:aebb44560ded5d2715866f1f01d0a4810"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa825e38b126a77b180df9288b0cdf83a"><td class="memItemLeft" align="right" valign="top">rclcpp::Publisher&lt; geometry_msgs::msg::Twist &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aa825e38b126a77b180df9288b0cdf83a">cmd_vel_pub_</a></td></tr>
 <tr class="separator:aa825e38b126a77b180df9288b0cdf83a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22f2ff9982d15ae24f65fe269cd72684"><td class="memItemLeft" align="right" valign="top">rclcpp::Subscription&lt; sensor_msgs::msg::Image &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a22f2ff9982d15ae24f65fe269cd72684">camera_sub_</a></td></tr>
+<tr class="separator:a22f2ff9982d15ae24f65fe269cd72684"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0a92a145e303560b64a6cc4ad05115c"><td class="memItemLeft" align="right" valign="top">rclcpp::Subscription&lt; sensor_msgs::msg::LaserScan &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#af0a92a145e303560b64a6cc4ad05115c">scan_sub_</a></td></tr>
+<tr class="separator:af0a92a145e303560b64a6cc4ad05115c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab80c0c46ca7a9486071ea17a388e5e02"><td class="memItemLeft" align="right" valign="top">rclcpp::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#ab80c0c46ca7a9486071ea17a388e5e02">last_image_time_</a></td></tr>
+<tr class="separator:ab80c0c46ca7a9486071ea17a388e5e02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80d4bc63e1beeca0402f5284e254f0fc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a80d4bc63e1beeca0402f5284e254f0fc">center_pixels_</a></td></tr>
+<tr class="separator:a80d4bc63e1beeca0402f5284e254f0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27659bc4583d007bdb78132bb4da8709"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a27659bc4583d007bdb78132bb4da8709">mutex_</a></td></tr>
+<tr class="separator:a27659bc4583d007bdb78132bb4da8709"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ea971a43adea4d3cf918e7e15677646"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a6ea971a43adea4d3cf918e7e15677646">rotation_speed_</a></td></tr>
+<tr class="separator:a6ea971a43adea4d3cf918e7e15677646"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b478945da19dff309b8270d3e387c81"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a4b478945da19dff309b8270d3e387c81">distance_to_grasp_object_</a></td></tr>
+<tr class="separator:a4b478945da19dff309b8270d3e387c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb591bfc9d88ca347be6d62c8fd0dd4a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#aeb591bfc9d88ca347be6d62c8fd0dd4a">current_distance_</a> = 100.0</td></tr>
+<tr class="separator:aeb591bfc9d88ca347be6d62c8fd0dd4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44663a1fb05b147e418de6cdba131a70"><td class="memItemLeft" align="right" valign="top">rclcpp::Client&lt; std_srvs::srv::SetBool &gt;::SharedPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a44663a1fb05b147e418de6cdba131a70">hoop_service_client_</a></td></tr>
+<tr class="separator:a44663a1fb05b147e418de6cdba131a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0162d7f9aebb86011d721553394f0f6f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; tf2_ros::TransformListener &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a0162d7f9aebb86011d721553394f0f6f">tf_listener_</a> {nullptr}</td></tr>
+<tr class="separator:a0162d7f9aebb86011d721553394f0f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bfeef85b143b9db842dd35208681052"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; tf2_ros::Buffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a5bfeef85b143b9db842dd35208681052">tf_buffer_</a></td></tr>
+<tr class="separator:a5bfeef85b143b9db842dd35208681052"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af11dd0c21a8306884f4ecac92b7b8550"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#af11dd0c21a8306884f4ecac92b7b8550">pose_mutex_</a></td></tr>
+<tr class="separator:af11dd0c21a8306884f4ecac92b7b8550"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86841097c8ac0e0dcfed68eafa759372"><td class="memItemLeft" align="right" valign="top">geometry_msgs::msg::Pose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classswarm__controller_1_1RobotController.html#a86841097c8ac0e0dcfed68eafa759372">robot_pose_</a></td></tr>
+<tr class="separator:a86841097c8ac0e0dcfed68eafa759372"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Robot Controller Node. </p>
 <p>Orchestrates the robot behavior by using the RobotFSM model and communicating with ROS 2. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad69ccddf1a4bfd100b4143428ebca9ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad69ccddf1a4bfd100b4143428ebca9ea">&#9670;&nbsp;</a></span>RobotController()</h2>
+<a id="ad7c0603ce7a47cbb91708b1a81bcefaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7c0603ce7a47cbb91708b1a81bcefaf">&#9670;&nbsp;</a></span>RobotController()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -140,22 +198,56 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="memname">swarm_controller::RobotController::RobotController </td>
           <td>(</td>
+          <td class="paramtype">const <a class="el" href="structswarm__controller_1_1RobotParams.html">RobotParams</a> &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new Robot Controller object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>Configuration parameters for the robot </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="acb7a463cb023734456ddc5ccdad5c181"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb7a463cb023734456ddc5ccdad5c181">&#9670;&nbsp;</a></span>approach_object()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::approach_object </td>
+          <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Construct a new Robot Controller object. </p>
+<p>Approach the detected object. </p>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
 <a id="ab686ffa730d5093bd49ca0a978e48bf8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab686ffa730d5093bd49ca0a978e48bf8">&#9670;&nbsp;</a></span>control_loop()</h2>
 
@@ -174,15 +266,15 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a702ca80d8c771ec04c171d3a1a76a7fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a702ca80d8c771ec04c171d3a1a76a7fa">&#9670;&nbsp;</a></span>detect_object()</h2>
+<a id="aef25494158fad3ae2867badc9b83c9c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef25494158fad3ae2867badc9b83c9c2">&#9670;&nbsp;</a></span>grasp_object()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +283,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void swarm_controller::RobotController::detect_object </td>
+          <td class="memname">void swarm_controller::RobotController::grasp_object </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -199,7 +291,61 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Grasp the object using the hoop mechanism. </p>
+
+</div>
+</div>
+<a id="aa06ff2db4ec7ab1746589e310ccb3b30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa06ff2db4ec7ab1746589e310ccb3b30">&#9670;&nbsp;</a></span>image_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::image_callback </td>
+          <td>(</td>
+          <td class="paramtype">const sensor_msgs::msg::Image::SharedPtr&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6555f98c14df7eeddae202324ecbf2b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6555f98c14df7eeddae202324ecbf2b6">&#9670;&nbsp;</a></span>lidar_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::lidar_callback </td>
+          <td>(</td>
+          <td class="paramtype">const sensor_msgs::msg::LaserScan::SharedPtr&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -235,10 +381,164 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa0e4122812e039f501d950ed602e5841"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0e4122812e039f501d950ed602e5841">&#9670;&nbsp;</a></span>move_to_home()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::move_to_home </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move the robot to the home position. </p>
+
+</div>
+</div>
+<a id="aa390264bc588f6e1dcac2c4993547c50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa390264bc588f6e1dcac2c4993547c50">&#9670;&nbsp;</a></span>move_to_location()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">geometry_msgs::msg::Twist swarm_controller::RobotController::move_to_location </td>
+          <td>(</td>
+          <td class="paramtype">const geometry_msgs::msg::Pose &amp;&#160;</td>
+          <td class="paramname"><em>current_pose</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const geometry_msgs::msg::Pose &amp;&#160;</td>
+          <td class="paramname"><em>goal_pose</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate velocity command to move from current pose to goal pose. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">current_pose</td><td>Current robot pose </td></tr>
+    <tr><td class="paramname">goal_pose</td><td>Target pose </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>geometry_msgs::msg::Twist Velocity command </dd></dl>
+
+</div>
+</div>
+<a id="aaa8d35174b79079304d6d26a50733bc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa8d35174b79079304d6d26a50733bc4">&#9670;&nbsp;</a></span>move_to_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::move_to_out </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move the robot to the drop-off location (Out) </p>
+
+</div>
+</div>
+<a id="a412220a22390fa563f661e499eced1c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a412220a22390fa563f661e499eced1c0">&#9670;&nbsp;</a></span>release_object()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::release_object </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Release the object by raising the hoop. </p>
+
+</div>
+</div>
+<a id="a2f3e904b3f599c528f15b5c783856567"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f3e904b3f599c528f15b5c783856567">&#9670;&nbsp;</a></span>rotate_search_object()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_controller::RobotController::rotate_search_object </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Rotate to search for the object (Green color) </p>
 
 </div>
 </div>
@@ -260,14 +560,60 @@ Private Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Scan the environment by rotating the robot. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a22f2ff9982d15ae24f65fe269cd72684"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22f2ff9982d15ae24f65fe269cd72684">&#9670;&nbsp;</a></span>camera_sub_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Subscription&lt;sensor_msgs::msg::Image&gt;::SharedPtr swarm_controller::RobotController::camera_sub_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a80d4bc63e1beeca0402f5284e254f0fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80d4bc63e1beeca0402f5284e254f0fc">&#9670;&nbsp;</a></span>center_pixels_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;uint8_t&gt; swarm_controller::RobotController::center_pixels_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa825e38b126a77b180df9288b0cdf83a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa825e38b126a77b180df9288b0cdf83a">&#9670;&nbsp;</a></span>cmd_vel_pub_</h2>
 
@@ -279,6 +625,50 @@ Private Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">rclcpp::Publisher&lt;geometry_msgs::msg::Twist&gt;::SharedPtr swarm_controller::RobotController::cmd_vel_pub_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeb591bfc9d88ca347be6d62c8fd0dd4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb591bfc9d88ca347be6d62c8fd0dd4a">&#9670;&nbsp;</a></span>current_distance_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double swarm_controller::RobotController::current_distance_ = 100.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4b478945da19dff309b8270d3e387c81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b478945da19dff309b8270d3e387c81">&#9670;&nbsp;</a></span>distance_to_grasp_object_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double swarm_controller::RobotController::distance_to_grasp_object_</td>
         </tr>
       </table>
   </td>
@@ -312,6 +702,226 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a44663a1fb05b147e418de6cdba131a70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44663a1fb05b147e418de6cdba131a70">&#9670;&nbsp;</a></span>hoop_service_client_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Client&lt;std_srvs::srv::SetBool&gt;::SharedPtr swarm_controller::RobotController::hoop_service_client_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab80c0c46ca7a9486071ea17a388e5e02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab80c0c46ca7a9486071ea17a388e5e02">&#9670;&nbsp;</a></span>last_image_time_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Time swarm_controller::RobotController::last_image_time_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a27659bc4583d007bdb78132bb4da8709"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27659bc4583d007bdb78132bb4da8709">&#9670;&nbsp;</a></span>mutex_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex swarm_controller::RobotController::mutex_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af11dd0c21a8306884f4ecac92b7b8550"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af11dd0c21a8306884f4ecac92b7b8550">&#9670;&nbsp;</a></span>pose_mutex_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex swarm_controller::RobotController::pose_mutex_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a90fd788b445f9e61566fc27ab7659222"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90fd788b445f9e61566fc27ab7659222">&#9670;&nbsp;</a></span>robot_name_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string swarm_controller::RobotController::robot_name_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a86841097c8ac0e0dcfed68eafa759372"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86841097c8ac0e0dcfed68eafa759372">&#9670;&nbsp;</a></span>robot_pose_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">geometry_msgs::msg::Pose swarm_controller::RobotController::robot_pose_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6ea971a43adea4d3cf918e7e15677646"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ea971a43adea4d3cf918e7e15677646">&#9670;&nbsp;</a></span>rotation_speed_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double swarm_controller::RobotController::rotation_speed_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af0a92a145e303560b64a6cc4ad05115c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0a92a145e303560b64a6cc4ad05115c">&#9670;&nbsp;</a></span>scan_sub_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">rclcpp::Subscription&lt;sensor_msgs::msg::LaserScan&gt;::SharedPtr swarm_controller::RobotController::scan_sub_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5bfeef85b143b9db842dd35208681052"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bfeef85b143b9db842dd35208681052">&#9670;&nbsp;</a></span>tf_buffer_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt;tf2_ros::Buffer&gt; swarm_controller::RobotController::tf_buffer_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0162d7f9aebb86011d721553394f0f6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0162d7f9aebb86011d721553394f0f6f">&#9670;&nbsp;</a></span>tf_listener_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;tf2_ros::TransformListener&gt; swarm_controller::RobotController::tf_listener_ {nullptr}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aebb44560ded5d2715866f1f01d0a4810"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aebb44560ded5d2715866f1f01d0a4810">&#9670;&nbsp;</a></span>timer_</h2>
 
@@ -334,7 +944,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/swarm_controller/include/swarm_controller/<a class="el" href="robot__controller_8hpp_source.html">robot_controller.hpp</a></li>
 <li>src/swarm_controller/src/<a class="el" href="robot__controller_8cpp.html">robot_controller.cpp</a></li>
 </ul>
 </div><!-- contents -->

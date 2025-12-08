@@ -3,18 +3,26 @@
 ![CICD Workflow status](https://github.com/AakashDammala/swarm/actions/workflows/run-unit-test-and-upload-codecov.yml/badge.svg) [![codecov](https://codecov.io/gh/AakashDammala/swarm/branch/phase1/graph/badge.svg)](https://codecov.io/gh/AakashDammala/swarm) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Overview
-Project Swarm is a decentralized multi-robot system designed to autonomously forage for hazardous waste (simulated as neon green objects) in a disaster scenario. The system utilizes multiple e-puck robots in a Webots simulation, leveraging ROS 2 Humble for communication and control.
+Project Swarm is a decentralized multi-robot system designed to autonomously forage for hazardous waste (simulated as neon green objects) in a disaster scenario (e.g., nuclear leaks).
+
+**The primary goal of this project was to test the limits of the simulation by spawning as many robots as possible and identifying system bottlenecks.** I successfully simulated 30+ robots using a highly optimized architecture.
 
 ## Team
 **Group 5**
-- Aakash Shetty Dammala
-- Dayanidhi Kandade
+- Aakash Shetty Dammala (SOLO)
 
 ## Features
-- **Decentralized Swarm**: Scalable to 10+ robots.
-- **Perception**: OpenCV-based color detection (HSV) and blob detection.
+- **Scalable Swarm**: Tested with 30+ robots.
+- **Perception**: Simplified pixel-based color detection for high performance (replacing heavy CV libraries).
+- **Navigation**: Custom lightweight planner (replacing Nav2 stack to reduce overhead).
+- **Dynamic World Generation**: World is built dynamically at launch based on `swarm_config.yaml`.
 - **Behavior**: Finite State Machine (FSM) for searching, collecting, and dumping waste.
-- **Simulation**: Webots simulation environment.
+- **Optimized Architecture**: Single executable for all nodes to minimize auxiliary process overhead.
+
+## Design Philosophy
+- **Parametrize Everything**: No hardcoded values. `swarm_config.yaml` drives the simulation (robot count, room size, etc.).
+- **Performance First**: Switched from OpenCV blob detection to pixel comparisons and from Nav2 to a simple planner to maximize the number of spawnable robots.
+- **Environment**: Each robot is spawned in its own zone to prevent initial race conditions.
 
 ## Installation
 1.  **Prerequisites**:
@@ -37,11 +45,6 @@ Project Swarm is a decentralized multi-robot system designed to autonomously for
 To launch the simulation with the swarm:
 ```bash
 ros2 launch swarm_view swarm_launch.py
-```
-
-To run the integration tests for swarm_view package:
-```bash
-ros2 launch swarm_view test_robot_topics.launch.py
 ```
 
 ## Project Structure
@@ -108,7 +111,7 @@ The generated PNG images will also be in the `UML/` directory.
 
 [Project Backlog](https://docs.google.com/spreadsheets/d/1apdEpKx5ClFwtKKBICFvqRLYgSiml8kgF4ZGtkOULHc)
 
-UML Diagrams: 'UML/initial/' folder
+UML Diagrams: 'UML/initial/' and 'UML/updated/' folders
 
 Doxygen Documentation: 'src/docs/doxygen/html/index.html' file
 

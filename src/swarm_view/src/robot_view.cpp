@@ -10,8 +10,7 @@ namespace swarm_view
 /**
  * @brief Construct a new RobotView object
  */
-RobotView::RobotView()
-: Node("robot_view")
+RobotView::RobotView() : Node("robot_view")
 {
   RCLCPP_INFO(this->get_logger(), "RobotView Initialized");
 }
@@ -45,7 +44,10 @@ void RobotView::move_robot()
 
 }  // namespace swarm_view
 
-int main(int argc, char ** argv)
+/**
+ * @brief Main function
+ */
+int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<swarm_view::RobotView>();

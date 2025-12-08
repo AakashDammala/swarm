@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['scan_5fenvironment_88',['scan_environment',['../classswarm__controller_1_1RobotController.html#a6dfc5d59953aa709d190e45ef712cf8a',1,'swarm_controller::RobotController::scan_environment()'],['../classswarm__view_1_1RobotView.html#a63399f7528ba4610dabef9544efbaadc',1,'swarm_view::RobotView::scan_environment()']]],
-  ['search_89',['search',['../classswarm__model_1_1RobotFSM.html#aeeeca55caa1c72483af627204b684d63',1,'swarm_model::RobotFSM']]],
-  ['set_5fobject_5fdetected_90',['set_object_detected',['../classswarm__model_1_1RobotFSM.html#a3a75f40f63c44aaf5ecee504bb53a0b2',1,'swarm_model::RobotFSM']]],
-  ['set_5fobstacle_5fdetected_91',['set_obstacle_detected',['../classswarm__model_1_1RobotFSM.html#a83b205f3c2645262dbc401385c0f7f17',1,'swarm_model::RobotFSM']]]
+  ['main_131',['main',['../robot__controller__node_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;robot_controller_node.cpp'],['../CMakeCXXCompilerId_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;CMakeCXXCompilerId.cpp'],['../robot__view_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;robot_view.cpp']]],
+  ['move_5frobot_132',['move_robot',['../classswarm__controller_1_1RobotController.html#a2797bfda2a43254f051698d0223a3766',1,'swarm_controller::RobotController::move_robot()'],['../classswarm__view_1_1RobotView.html#aeecabb28a7e47269a403fdf9a73d3a47',1,'swarm_view::RobotView::move_robot()']]],
+  ['move_5fto_5fhome_133',['move_to_home',['../classswarm__controller_1_1RobotController.html#aa0e4122812e039f501d950ed602e5841',1,'swarm_controller::RobotController']]],
+  ['move_5fto_5flocation_134',['move_to_location',['../classswarm__controller_1_1RobotController.html#aa390264bc588f6e1dcac2c4993547c50',1,'swarm_controller::RobotController']]],
+  ['move_5fto_5fout_135',['move_to_out',['../classswarm__controller_1_1RobotController.html#aaa8d35174b79079304d6d26a50733bc4',1,'swarm_controller::RobotController']]]
 ];
