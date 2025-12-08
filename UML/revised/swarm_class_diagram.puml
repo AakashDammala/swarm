@@ -1,0 +1,90 @@
+@startuml
+enum "State" as C_0005350900337974002811
+enum C_0005350900337974002811 {
+FIND_OBJECT
+APPROACH_OBJECT
+GRASP_OBJECT
+MOVE_HOME
+MOVE_OUT
+RELEASE_OBJECT
+}
+class "RobotFSM" as C_0009163904200768550061
+class C_0009163904200768550061 {
++RobotFSM() : void
+..
++get_state() const : State
++set_action_complete(bool complete) : void
++set_at_drop(bool at_drop) : void
++set_at_home(bool at_home) : void
++set_distance_to_object(double distance) : void
++set_min_distance_to_grasp(double distance) : void
++set_object_detected(bool detected) : void
++update() : void
+__
+-action_complete_ : bool
+-at_drop_ : bool
+-at_home_ : bool
+-current_state_ : State
+-distance_to_object_ : double
+-holding_object_ : bool
+-min_distance_to_grasp_ : double
+-object_detected_ : bool
+}
+class "::swarm_controller::RobotParams" as C_0002929110404639133816
+class C_0002929110404639133816 {
+__
++distance_to_grasp_object : double
++robot_name : std::string
++rotation_speed : double
+}
+class "::swarm_controller::RobotController" as C_0014652364979860884623
+class C_0014652364979860884623 {
++RobotController(const swarm_controller::RobotParams & params) : void
+..
+-approach_object() : void
+-control_loop() : void
+-grasp_object() : void
+-image_callback(const sensor_msgs::msg::Image::SharedPtr msg) : void
+-lidar_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg) : void
+-move_robot(double linear_x, double angular_z) : void
+-move_to_home() : void
+-move_to_location(const geometry_msgs::msg::Pose & current_pose, const geometry_msgs::msg::Pose & goal_pose) : geometry_msgs::msg::Twist
+-move_to_out() : void
+-release_object() : void
+-rotate_search_object() : void
+-scan_environment() : void
+__
+-camera_sub_ : rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr
+-center_pixels_ : std::vector<uint8_t>
+-cmd_vel_pub_ : rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr
+-current_distance_ : double
+-distance_to_grasp_object_ : double
+-fsm_ : RobotFSM
+-hoop_service_client_ : rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr
+-last_image_time_ : rclcpp::Time
+-mutex_ : std::mutex
+-pose_mutex_ : std::mutex
+-robot_name_ : std::string
+-robot_pose_ : geometry_msgs::msg::Pose
+-rotation_speed_ : double
+-scan_sub_ : rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr
+-tf_buffer_ : std::unique_ptr<tf2_ros::Buffer>
+-tf_listener_ : std::shared_ptr<tf2_ros::TransformListener>
+-timer_ : rclcpp::TimerBase::SharedPtr
+}
+class "::swarm_view::RobotView" as C_0017533343851551892716
+class C_0017533343851551892716 {
++RobotView() : void
+..
++detect_object() : void
++move_robot() : void
++scan_environment() : void
+__
+}
+C_0009163904200768550061 o-- C_0005350900337974002811 : -current_state_
+C_0014652364979860884623 ..> C_0002929110404639133816
+C_0014652364979860884623 o-- C_0009163904200768550061 : -fsm_
+
+'Generated with clang-uml, version 0.6.2
+'LLVM version Ubuntu clang version 15.0.7
+@enduml
