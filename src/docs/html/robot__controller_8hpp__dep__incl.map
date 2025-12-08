@@ -1,0 +1,6 @@
+<map id="src/swarm_controller/include/swarm_controller/robot_controller.hpp" name="src/swarm_controller/include/swarm_controller/robot_controller.hpp">
+<area shape="rect" id="node1" title="Header for Robot Controller." alt="" coords="193,5,383,61"/>
+<area shape="rect" id="node2" href="$robot__controller_8cpp.html" title="Implementation of the Robot Controller Node." alt="" coords="5,117,184,158"/>
+<area shape="rect" id="node3" href="$robot__controller__node_8cpp.html" title="Node entry point for Robot Controller." alt="" coords="209,109,367,165"/>
+<area shape="rect" id="node4" href="$test__robot__controller_8cpp.html" title="Unit tests for Robot Controller." alt="" coords="392,117,608,158"/>
+</map>

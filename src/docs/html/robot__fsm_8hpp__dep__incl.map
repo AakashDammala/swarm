@@ -1,5 +1,9 @@
 <map id="src/swarm_model/include/swarm_model/robot_fsm.hpp" name="src/swarm_model/include/swarm_model/robot_fsm.hpp">
-<area shape="rect" id="node1" title="Header file for the Robot Finite State Machine." alt="" coords="83,5,299,47"/>
-<area shape="rect" id="node2" href="$robot__controller_8cpp.html" title="Implementation of the Robot Controller Node." alt="" coords="5,95,184,136"/>
-<area shape="rect" id="node3" href="$robot__fsm_8cpp.html" title="Implementation of the Robot Finite State Machine." alt="" coords="208,95,368,136"/>
+<area shape="rect" id="node1" title="Header file for the Robot Finite State Machine." alt="" coords="380,5,596,47"/>
+<area shape="rect" id="node2" href="$robot__controller_8hpp.html" title="Header for Robot Controller." alt="" coords="193,95,383,151"/>
+<area shape="rect" id="node6" href="$robot__fsm_8cpp.html" title="Implementation of the Robot Finite State Machine." alt="" coords="408,102,568,143"/>
+<area shape="rect" id="node7" href="$robot__fsm__test_8cpp.html" title="Unit tests for RobotFSM." alt="" coords="593,102,759,143"/>
+<area shape="rect" id="node3" href="$robot__controller_8cpp.html" title="Implementation of the Robot Controller Node." alt="" coords="5,206,184,247"/>
+<area shape="rect" id="node4" href="$robot__controller__node_8cpp.html" title="Node entry point for Robot Controller." alt="" coords="209,199,367,255"/>
+<area shape="rect" id="node5" href="$test__robot__controller_8cpp.html" title="Unit tests for Robot Controller." alt="" coords="392,206,608,247"/>
 </map>
