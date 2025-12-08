@@ -11,8 +11,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <string>
 #include <swarm_model/robot_fsm.hpp>
+#include <std_srvs/srv/set_bool.hpp>
+#include <string>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <vector>
 
@@ -58,6 +59,8 @@ class RobotController : public rclcpp::Node
   double rotation_speed_;
   double distance_to_grasp_object_;
   double current_distance_ = 100.0;  // Store latest lidar distance
+
+  rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr hoop_service_client_;
 
   void scan_environment();
   void rotate_search_object();

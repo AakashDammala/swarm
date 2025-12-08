@@ -67,6 +67,10 @@ RobotController::RobotController(const RobotParams& params)
   // run the timer callback at 20 Hz
   timer_ = this->create_wall_timer(std::chrono::milliseconds(50),
                                    std::bind(&RobotController::control_loop, this));
+
+  // Initialize Hoop Service Client
+  std::string hoop_service_name = "/" + params.robot_name + "/set_hoop_level";
+  hoop_service_client_ = this->create_client<std_srvs::srv::SetBool>(hoop_service_name);
 }
 
 void RobotController::scan_environment()
@@ -144,6 +148,18 @@ void RobotController::grasp_object()
   RCLCPP_INFO(this->get_logger(), "Grasping object...");
   move_robot(0.0, 0.0);  // Stop
 
+  // Lower Hoop
+  if (hoop_service_client_->service_is_ready())
+  {
+    auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request->data = false;  // Down
+    hoop_service_client_->async_send_request(request);
+  }
+  else
+  {
+    RCLCPP_WARN(this->get_logger(), "Hoop service is not ready");
+  }
+
   // Simulate release time
   rclcpp::sleep_for(std::chrono::seconds(2));
 
@@ -211,6 +227,18 @@ void RobotController::move_to_out()
 void RobotController::release_object()
 {
   RCLCPP_INFO(this->get_logger(), "Releasing object...");
+
+  // Raise Hoop
+  if (hoop_service_client_->service_is_ready())
+  {
+    auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request->data = true;  // Up
+    hoop_service_client_->async_send_request(request);
+  }
+  else
+  {
+    RCLCPP_WARN(this->get_logger(), "Hoop service is not ready");
+  }
 
   // Simulate release time
   rclcpp::sleep_for(std::chrono::seconds(2));
@@ -434,7 +462,7 @@ int main(int argc, char** argv)
 
     // Robot names are 1-indexed in this project
     params.robot_name = "robot_" + std::to_string(i + 1);
-    params.rotation_speed = 0.1;
+    params.rotation_speed = 0.2;
     params.distance_to_grasp_object = 0.35;
 
     auto node = std::make_shared<swarm_controller::RobotController>(params);
