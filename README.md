@@ -107,9 +107,9 @@ The generated PNG images will also be in the `UML/` directory.
 
 ## Phase 1 document links
 
-[Sprint Planning & Review Notes](https://docs.google.com/document/d/1xyVzuPojLUU2ijKYIgwqooY2sP45Se7Qx6sxsTQxp9g)
+Sprint Planning & Review Notes: added in 'reports/' folder
 
-[Project Backlog](https://docs.google.com/spreadsheets/d/1apdEpKx5ClFwtKKBICFvqRLYgSiml8kgF4ZGtkOULHc)
+[Project Backlog](https://docs.google.com/spreadsheets/d/1kroBcJWoCgf57XVy6Wv2AccIIyZlUs5p9AChHjzjWLo)
 
 UML Diagrams: 'UML/initial/' and 'UML/updated/' folders
 
